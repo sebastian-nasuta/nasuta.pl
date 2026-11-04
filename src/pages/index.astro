@@ -1,0 +1,291 @@
+---
+import Layout from '../layouts/Layout.astro';
+import HeroScene from '../components/HeroScene.astro';
+import { tracks } from '../data/tracks';
+---
+
+<Layout>
+  <HeroScene />
+
+  <main class="relative z-10 max-w-5xl mx-auto px-6 sm:px-10 py-28 space-y-32">
+    <!-- 01 // ŚCIEŻKI & ROADMAPA -->
+    <section id="sciezki" class="scroll-mt-16">
+      <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pb-6 border-b border-white/[0.08]">
+        <div>
+          <p class="font-mono text-[0.62rem] tracking-[0.42em] uppercase text-amber mb-2">
+            0x01 // Ścieżki
+          </p>
+          <h2 class="text-xl sm:text-2xl font-extralight tracking-[0.24em] uppercase heading-gradient">
+            Wybierz obszar
+          </h2>
+        </div>
+        <span class="font-mono text-[0.62rem] tracking-[0.22em] uppercase text-ink/40">
+          &lt;select:track /&gt;
+        </span>
+      </div>
+
+      <!-- 3 Kafle wyboru ścieżki -->
+      <div class="mt-10 grid md:grid-cols-3 gap-6" role="tablist" aria-label="Ścieżki tematyczne">
+        {tracks.map((item) => (
+          <button
+            type="button"
+            role="tab"
+            aria-selected="false"
+            aria-controls={`panel-${item.id}`}
+            data-track-btn={item.id}
+            class="track-card group relative text-left p-6 border border-white/[0.08] bg-white/[0.015] hover:border-amber/45 hover:bg-white/[0.025] transition-all duration-300 flex flex-col justify-between cursor-pointer focus:outline-none focus-visible:border-amber"
+          >
+            <div>
+              <div class="flex items-center justify-between gap-2 font-mono text-[0.58rem] tracking-[0.24em] uppercase text-amber/90 mb-4">
+                <span>{item.code}</span>
+                <span class="track-indicator w-2 h-2 rounded-full bg-white/15 group-hover:bg-amber/60 transition-colors"></span>
+              </div>
+              <h3 class="text-base font-light tracking-[0.16em] uppercase text-ink mb-3 group-hover:text-amber transition-colors">
+                {item.title}
+              </h3>
+              <p class="text-sm font-extralight text-ink/60 leading-relaxed">
+                {item.desc}
+              </p>
+            </div>
+
+            <div class="mt-6 pt-4 border-t border-white/[0.06] flex items-center justify-between gap-2 font-mono text-[0.58rem] tracking-[0.2em] uppercase">
+              <span class="text-ink/35">{item.spec}</span>
+              <span class="track-cta text-amber/75 group-hover:text-amber transition-colors">
+                Ścieżka ({item.nodes.length}) ↓
+              </span>
+            </div>
+          </button>
+        ))}
+      </div>
+
+      <!-- Kontener rozwijanej roadmapy dla wybranej ścieżki -->
+      <div id="roadmap-wrapper" class="mt-10">
+        {tracks.map((track) => (
+          <div
+            id={`panel-${track.id}`}
+            role="tabpanel"
+            data-track-panel={track.id}
+            class="track-panel hidden border border-amber/30 bg-white/[0.012] p-6 sm:p-10 relative"
+          >
+            <!-- Nagłówek wybranej ścieżki -->
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-white/[0.08]">
+              <div class="flex items-center gap-3">
+                <span class="w-2 h-2 rounded-full bg-amber shadow-[0_0_10px_#df9b52]"></span>
+                <div>
+                  <p class="font-mono text-[0.6rem] tracking-[0.35em] uppercase text-amber">
+                    {track.code} // ROADMAP
+                  </p>
+                  <h3 class="text-lg sm:text-xl font-light tracking-[0.18em] uppercase text-ink mt-1">
+                    {track.shortLabel}
+                  </h3>
+                </div>
+              </div>
+
+              <button
+                type="button"
+                data-close-track
+                class="self-start sm:self-auto font-mono text-[0.6rem] tracking-[0.25em] uppercase text-ink/45 hover:text-amber border border-white/10 hover:border-amber/40 px-3 py-1.5 transition-colors cursor-pointer"
+              >
+                [ Zamknij × ]
+              </button>
+            </div>
+
+            <!-- Oś projektów w tej ścieżce -->
+            <div class="mt-8 relative space-y-6">
+              <!-- Pionowa linia osi idealnie w osi kropek (x = 7px, środek 7.5px) -->
+              <div
+                aria-hidden="true"
+                class="absolute left-[7px] top-6 bottom-6 w-px bg-gradient-to-b from-amber/75 via-white/15 to-white/5"
+              ></div>
+
+              {track.nodes.map((node) => (
+                <article class="relative pl-8 sm:pl-10 group">
+                  <!-- Punkt na osi (szerokość 15px -> środek dokładnie na 7.5px) -->
+                  <span
+                    aria-hidden="true"
+                    class="absolute left-0 top-6 -translate-y-1/2 w-[15px] h-[15px] rounded-full border-[3px] border-bg bg-amber shadow-[0_0_10px_rgba(223,155,82,0.65)] transition-transform group-hover:scale-125"
+                  ></span>
+                  <!-- Poziomy łącznik od kropki do ramki projektu -->
+                  <span
+                    aria-hidden="true"
+                    class="absolute left-[15px] top-6 -translate-y-1/2 w-[17px] sm:w-[25px] h-px bg-white/15 group-hover:bg-amber/50 transition-colors"
+                  ></span>
+
+                  <div class="p-5 sm:p-6 border border-white/[0.08] bg-bg/60 hover:border-amber/40 transition-colors">
+                    <div class="flex flex-wrap items-center justify-between gap-2 font-mono text-[0.6rem] tracking-[0.24em] uppercase mb-2">
+                      <span class="text-amber/80">{node.id}{node.date ? ` · ${node.date}` : ''}</span>
+                    </div>
+
+                    <div class="flex items-baseline justify-between gap-4">
+                      <h4 class="text-base sm:text-lg font-light tracking-[0.14em] uppercase text-ink">
+                        {node.title}
+                      </h4>
+                      {node.link && (
+                        <a
+                          href={node.link}
+                          target={node.link.startsWith('http') ? '_blank' : undefined}
+                          rel={node.link.startsWith('http') ? 'noopener noreferrer' : undefined}
+                          class="font-mono text-[0.65rem] tracking-[0.2em] uppercase text-amber hover:underline shrink-0"
+                        >
+                          Zobacz ↗
+                        </a>
+                      )}
+                    </div>
+
+                    <p class="mt-2.5 text-sm font-extralight text-ink/65 leading-relaxed">
+                      {node.desc}
+                    </p>
+
+                    <div class="mt-5 flex flex-wrap gap-2">
+                      {node.tags.map((tag) => (
+                        <span class="px-2.5 py-0.5 border border-white/[0.08] font-mono text-[0.56rem] tracking-[0.2em] uppercase text-ink/45">
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                </article>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <!-- 02 // KONTAKT -->
+    <section id="kontakt" class="scroll-mt-16">
+      <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pb-6 border-b border-white/[0.08]">
+        <div>
+          <p class="font-mono text-[0.62rem] tracking-[0.42em] uppercase text-amber mb-2">
+            0x02 // Transmisja
+          </p>
+          <h2 class="text-xl sm:text-2xl font-extralight tracking-[0.24em] uppercase heading-gradient">
+            Kontakt &amp; Sieć
+          </h2>
+        </div>
+        <span class="font-mono text-[0.62rem] tracking-[0.22em] uppercase text-ink/40">
+          &lt;signal:open /&gt;
+        </span>
+      </div>
+
+      <div class="mt-10 flex flex-wrap items-center gap-4 font-mono text-[0.66rem] tracking-[0.26em] uppercase">
+        <a
+          href="https://github.com/sebastian-nasuta"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="px-6 py-4 border border-white/[0.1] bg-white/[0.015] text-ink/80 hover:border-amber/60 hover:text-amber transition-colors"
+        >
+          GitHub ↗
+        </a>
+        <a
+          href="https://makerworld.com/@chy.ba.tys"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="px-6 py-4 border border-white/[0.1] bg-white/[0.015] text-ink/80 hover:border-amber/60 hover:text-amber transition-colors"
+        >
+          MakerWorld (@chy.ba.tys) ↗
+        </a>
+        <a
+          href="mailto:kontakt@nasuta.pl"
+          class="px-6 py-4 border border-white/[0.1] bg-white/[0.015] text-ink/80 hover:border-amber/60 hover:text-amber transition-colors"
+        >
+          kontakt@nasuta.pl
+        </a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="border-t border-white/[0.07] py-8 px-6 sm:px-10">
+    <div class="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 font-mono text-[0.62rem] tracking-[0.24em] uppercase text-ink/40">
+      <div class="flex items-center gap-3">
+        <span class="w-1.5 h-1.5 rounded-full bg-amber/80"></span>
+        <span>nasuta.pl // {new Date().getFullYear()}</span>
+      </div>
+      <span>Layer by layer · Note by note · Line by line</span>
+      <a href="#top" class="hover:text-amber transition-colors">↑ Top</a>
+    </div>
+  </footer>
+</Layout>
+
+<style>
+  .track-card[aria-selected="true"] {
+    border-color: rgba(223, 155, 82, 0.75);
+    background-color: rgba(223, 155, 82, 0.04);
+  }
+
+  .track-card[aria-selected="true"] .track-indicator {
+    background-color: var(--amber);
+    box-shadow: 0 0 10px var(--amber);
+  }
+
+  .track-card[aria-selected="true"] .track-cta {
+    color: var(--amber);
+  }
+
+  .track-panel {
+    animation: panelFade 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+
+  @keyframes panelFade {
+    from {
+      opacity: 0;
+      transform: translateY(-6px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+</style>
+
+<script is:inline>
+  (function () {
+    const buttons = document.querySelectorAll("[data-track-btn]");
+    const panels = document.querySelectorAll("[data-track-panel]");
+    const closeBtns = document.querySelectorAll("[data-close-track]");
+
+    function selectTrack(trackId, shouldScroll) {
+      let openedPanel = null;
+
+      buttons.forEach(function (btn) {
+        const id = btn.getAttribute("data-track-btn");
+        const isSelected = id === trackId;
+        btn.setAttribute("aria-selected", isSelected ? "true" : "false");
+      });
+
+      panels.forEach(function (panel) {
+        const id = panel.getAttribute("data-track-panel");
+        if (id === trackId) {
+          panel.classList.remove("hidden");
+          openedPanel = panel;
+        } else {
+          panel.classList.add("hidden");
+        }
+      });
+
+      if (shouldScroll && openedPanel) {
+        setTimeout(function () {
+          openedPanel.scrollIntoView({ behavior: "smooth", block: "nearest" });
+        }, 60);
+      }
+    }
+
+    buttons.forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        const id = btn.getAttribute("data-track-btn");
+        const alreadyActive = btn.getAttribute("aria-selected") === "true";
+        if (alreadyActive) {
+          selectTrack(null, false);
+        } else {
+          selectTrack(id, true);
+        }
+      });
+    });
+
+    closeBtns.forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        selectTrack(null, false);
+      });
+    });
+  })();
+</script>
