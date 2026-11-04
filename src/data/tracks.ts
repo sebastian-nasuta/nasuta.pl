@@ -11,7 +11,6 @@ export interface RoadmapNode {
 export interface Track {
   id: '3d' | 'bass' | 'code';
   code: string;
-  shortLabel: string;
   spec: string;
   title: string;
   desc: string;
@@ -22,7 +21,6 @@ export const tracks: Track[] = [
   {
     id: '3d',
     code: '0x01 // LAYER BY LAYER',
-    shortLabel: 'Ścieżka: Druk 3D',
     spec: 'Z: 0.20mm · 215°C · CAD/FDM',
     title: 'Druk 3D',
     desc: 'Po godzinach projektuję w CAD i drukuję części użytkowe, uchwyty, obudowy oraz drobne poprawki do codziennych rzeczy.',
@@ -56,7 +54,6 @@ export const tracks: Track[] = [
   {
     id: 'bass',
     code: '0x02 // NOTE BY NOTE',
-    shortLabel: 'Ścieżka: Gitara basowa',
     spec: '41.20 Hz – 98.00 Hz · E1–G2',
     title: 'Gitara basowa',
     desc: 'Lubię niskie brzmienia i granie w sekcji rytmicznej. Cztery struny to dla mnie najlepszy sposób na oderwanie głowy od monitora.',
@@ -85,7 +82,6 @@ export const tracks: Track[] = [
   {
     id: 'code',
     code: '0x03 // LINE BY LINE',
-    shortLabel: 'Ścieżka: Kod i technologia',
     spec: 'CODE · TOOLS · WEB',
     title: 'Kod i technologia',
     desc: 'Na co dzień pracuję z kodem i technologią. Lubię proste, działające rozwiązania i narzędzia, które ułatwiają życie.',
