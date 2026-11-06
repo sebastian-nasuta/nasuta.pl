@@ -8,12 +8,12 @@
   <!-- HUD Overlay inside Hero -->
   <div class="relative z-[3] pointer-events-none w-full h-full p-[clamp(1.5rem,3.5vw,2.75rem)] flex flex-col justify-between">
     <!-- Top HUD row -->
-    <div class="flex justify-between items-center font-mono text-[0.68rem] max-sm:text-[0.58rem] tracking-[0.22em] max-sm:tracking-[0.14em] uppercase text-ink/45 font-light">
+    <div class="relative flex justify-between items-center font-mono text-[0.68rem] max-sm:text-[0.58rem] tracking-[0.22em] max-sm:tracking-[0.14em] uppercase text-ink/45 font-light">
       <a href="#top" class="pointer-events-auto text-ink tracking-[0.34em] font-normal hover:text-amber transition-colors">
         nasuta.pl
       </a>
 
-      <nav class="pointer-events-auto hidden md:flex items-center gap-8 text-[0.65rem] tracking-[0.26em]">
+      <nav class="pointer-events-auto hidden md:flex items-center gap-8 text-[0.65rem] tracking-[0.26em] absolute left-1/2 -translate-x-1/2">
         <a href="#sciezki" class="text-ink/55 hover:text-amber transition-colors">// Projekty</a>
         <a href="#kontakt" class="text-ink/55 hover:text-amber transition-colors">// Kontakt</a>
       </nav>
@@ -25,11 +25,11 @@
     </div>
 
     <!-- Bottom HUD row -->
-    <div class="flex justify-between items-center font-mono text-[0.68rem] max-sm:text-[0.58rem] tracking-[0.22em] max-sm:tracking-[0.14em] uppercase text-ink/45 font-light">
+    <div class="relative flex justify-between items-center font-mono text-[0.68rem] max-sm:text-[0.58rem] tracking-[0.22em] max-sm:tracking-[0.14em] uppercase text-ink/45 font-light">
       <span class="telemetry" id="freqTelemetry">41.20 Hz · 55.00 Hz · 73.42 Hz · 98.00 Hz</span>
       <a
         href="#sciezki"
-        class="pointer-events-auto hidden sm:inline-flex items-center gap-2 text-ink/40 hover:text-amber transition-colors tracking-[0.3em] text-[0.6rem]"
+        class="pointer-events-auto hidden sm:inline-flex items-center gap-2 text-ink/40 hover:text-amber transition-colors tracking-[0.3em] text-[0.6rem] absolute left-1/2 -translate-x-1/2"
       >
         <span>SCROLL</span>
         <span class="text-amber">↓</span>
@@ -40,7 +40,7 @@
 
   <!-- Center-Bottom Title Block (identical positioning to nasuta.pl-temp) -->
   <div class="title-block" id="titleBlock">
-    <p class="whisper-top">0x00 // Sebastian Nasuta</p>
+    <p class="whisper-top">0x00 // Sic parvis magna</p>
     <h1 class="hero-heading">Something is taking shape</h1>
     <div class="divider" aria-hidden="true"></div>
     <p class="riddle">
