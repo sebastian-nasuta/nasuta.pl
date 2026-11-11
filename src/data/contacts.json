@@ -1,0 +1,19 @@
+[
+  {
+    "id": "github",
+    "label": "GitHub ↗",
+    "href": "https://github.com/sebastian-nasuta",
+    "external": true
+  },
+  {
+    "id": "makerworld",
+    "label": "MakerWorld (@chy.ba.tys) ↗",
+    "href": "https://makerworld.com/@chy.ba.tys",
+    "external": true
+  },
+  {
+    "id": "email",
+    "label": "kontakt@nasuta.pl",
+    "href": "mailto:kontakt@nasuta.pl"
+  }
+]

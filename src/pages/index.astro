@@ -1,67 +1,71 @@
 ---
+import { getCollection } from 'astro:content';
 import Layout from '../layouts/Layout.astro';
 import HeroScene from '../components/HeroScene.astro';
 import SectionHeader from '../components/SectionHeader.astro';
 import ProjectCard from '../components/ProjectCard.astro';
-import { contactLinks, tracks } from '../data/tracks';
 import { t } from '../i18n';
+
+const trackEntries = await getCollection('tracks');
+const tracks = trackEntries.sort((a, b) => a.data.order - b.data.order);
+const contactEntries = await getCollection('contacts');
 ---
 
 <Layout>
   <HeroScene />
 
   <main class="relative z-10 max-w-5xl mx-auto px-6 sm:px-10 py-28 space-y-32">
-    <!-- 01 // PROJEKTY / PROJECTS -->
-    <section id="sciezki" class="scroll-mt-16">
+    <!-- 01 // PROJECTS -->
+    <section id="projects" class="scroll-mt-16">
       <SectionHeader
         tagKey="sections.projects.tag"
         titleKey="sections.projects.title"
         statusTag="<select:domain />"
       />
 
-      <!-- 3 Kafle wyboru obszaru -->
-      <div class="mt-10 grid md:grid-cols-3 gap-6" role="tablist" aria-label="Obszary projektów">
-        {tracks.map((item) => (
+      <!-- Domain selector cards -->
+      <div class="mt-10 grid md:grid-cols-3 gap-6" role="tablist" aria-label="Project domains">
+        {tracks.map(({ id, data }) => (
           <button
             type="button"
             role="tab"
             aria-selected="false"
-            aria-controls={`panel-${item.id}`}
-            data-track-btn={item.id}
+            aria-controls={`panel-${id}`}
+            data-track-btn={id}
             class="track-card group relative text-left p-6 border border-white/[0.08] bg-white/[0.015] hover:border-amber/45 hover:bg-white/[0.025] transition-all duration-300 flex flex-col justify-between cursor-pointer focus:outline-none focus-visible:border-amber"
           >
             <div>
               <div class="flex items-center justify-between gap-2 font-mono text-[0.58rem] tracking-[0.24em] uppercase text-amber/90 mb-4">
-                <span data-i18n-key={item.codeKey}>{t(item.codeKey)}</span>
+                <span data-i18n-key={data.codeKey}>{t(data.codeKey)}</span>
                 <span class="track-indicator w-2 h-2 rounded-full bg-white/15 group-hover:bg-amber/60 transition-colors"></span>
               </div>
               <h3
-                data-i18n-key={item.titleKey}
+                data-i18n-key={data.titleKey}
                 class="text-base font-light tracking-[0.16em] uppercase text-ink group-hover:text-amber transition-colors"
               >
-                {t(item.titleKey)}
+                {t(data.titleKey)}
               </h3>
             </div>
 
             <div class="mt-6 pt-4 border-t border-white/[0.06] flex items-center justify-between gap-2 font-mono text-[0.58rem] tracking-[0.2em] uppercase">
-              <span class="text-ink/35">{item.spec}</span>
+              <span class="text-ink/35">{data.spec}</span>
               <span class="track-cta text-amber/75 group-hover:text-amber transition-colors">
-                <span data-i18n-key="sections.projects.countLabel">{t('sections.projects.countLabel')}</span> ({item.nodes.length}) ↓
+                <span data-i18n-key="sections.projects.countLabel">{t('sections.projects.countLabel')}</span> ({data.nodes.length}) ↓
               </span>
             </div>
           </button>
         ))}
       </div>
 
-      <!-- Kontener rozwijanej listy projektów -->
+      <!-- Expandable project panels -->
       <div id="roadmap-wrapper" class="mt-10">
-        {tracks.map((track) => {
-          const reversedNodes = [...track.nodes].reverse();
+        {tracks.map(({ id, data }) => {
+          const reversedNodes = [...data.nodes].reverse();
           return (
             <div
-              id={`panel-${track.id}`}
+              id={`panel-${id}`}
               role="tabpanel"
-              data-track-panel={track.id}
+              data-track-panel={id}
               class="track-panel hidden border border-amber/30 bg-white/[0.012] p-6 sm:p-10 relative"
             >
               <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-white/[0.08]">
@@ -69,16 +73,16 @@ import { t } from '../i18n';
                   <span class="w-2 h-2 rounded-full bg-amber shadow-[0_0_10px_#df9b52]"></span>
                   <div>
                     <p
-                      data-i18n-key={track.codeKey}
+                      data-i18n-key={data.codeKey}
                       class="font-mono text-[0.6rem] tracking-[0.35em] uppercase text-amber"
                     >
-                      {t(track.codeKey)}
+                      {t(data.codeKey)}
                     </p>
                     <h3
-                      data-i18n-key={track.titleKey}
+                      data-i18n-key={data.titleKey}
                       class="text-lg sm:text-xl font-light tracking-[0.18em] uppercase text-ink mt-1"
                     >
-                      {t(track.titleKey)}
+                      {t(data.titleKey)}
                     </h3>
                   </div>
                 </div>
@@ -114,8 +118,8 @@ import { t } from '../i18n';
       </div>
     </section>
 
-    <!-- 02 // KONTAKT / CONTACT -->
-    <section id="kontakt" class="scroll-mt-16">
+    <!-- 02 // CONTACT -->
+    <section id="contact" class="scroll-mt-16">
       <SectionHeader
         tagKey="sections.contact.tag"
         titleKey="sections.contact.title"
@@ -123,7 +127,7 @@ import { t } from '../i18n';
       />
 
       <div class="mt-10 flex flex-wrap items-center gap-4 font-mono text-[0.66rem] tracking-[0.26em] uppercase">
-        {contactLinks.map((link) => (
+        {contactEntries.map(({ data: link }) => (
           <a
             href={link.href}
             target={link.external ? '_blank' : undefined}

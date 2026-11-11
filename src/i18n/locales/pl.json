@@ -6,10 +6,10 @@
   "hero": {
     "scroll": "Przewiń",
     "heading": "Coś nabiera kształtu",
-    "riddle1": "Warstwa po warstwie",
-    "riddle2": "Nuta po nucie",
-    "riddle3": "Linia po linii",
-    "riddleFull": "Warstwa po warstwie · Nuta po nucie · Linia po linii",
+    "riddle1": "Linia po linii",
+    "riddle2": "Warstwa po warstwie",
+    "riddle3": "Nuta po nucie",
+    "riddleFull": "Linia po linii · Warstwa po warstwie · Nuta po nucie",
     "backToTop": "↑ Góra"
   },
   "sections": {
@@ -25,17 +25,17 @@
     }
   },
   "tracks": {
+    "code": {
+      "code": "0x01 // Linia po linii",
+      "title": "Kod i technologia"
+    },
     "3d": {
-      "code": "0x01 // Warstwa po warstwie",
+      "code": "0x02 // Warstwa po warstwie",
       "title": "Druk 3D"
     },
     "bass": {
-      "code": "0x02 // Nuta po nucie",
+      "code": "0x03 // Nuta po nucie",
       "title": "Gitara basowa"
-    },
-    "code": {
-      "code": "0x03 // Linia po linii",
-      "title": "Kod i technologia"
     }
   },
   "projects": {

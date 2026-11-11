@@ -1,0 +1,32 @@
+{
+  "order": 2,
+  "codeKey": "tracks.3d.code",
+  "spec": "Z: 0.20mm · 215°C · CAD/FDM",
+  "titleKey": "tracks.3d.title",
+  "nodes": [
+    {
+      "id": "3D-01",
+      "titleKey": "projects.3D-01.title",
+      "descKey": "projects.3D-01.desc",
+      "tags": ["AeroPress", "Twist Lid", "No Supports", "MakerWorld"],
+      "link": "https://makerworld.com/pl/models/1392555-aeropress-filter-case-twist-lid#profileId-2587994",
+      "image": "https://makerworld.bblmw.com/makerworld/model/US8e88b8c474e65b/design/2025-05-07_e026d0051f44c8.png?x-oss-process=image%2Fformat%2Cwebp"
+    },
+    {
+      "id": "3D-02",
+      "titleKey": "projects.3D-02.title",
+      "descKey": "projects.3D-02.desc",
+      "tags": ["RPG", "Snap-Fit", "AMS / Multicolor", "MakerWorld"],
+      "link": "https://makerworld.com/pl/models/1343902-rpg-dice-set-box-baby-dragon#profileId-1385015",
+      "image": "https://makerworld.bblmw.com/makerworld/model/USce0879fc77c59e/design/2025-04-21_2aac7808dde83.jpg?x-oss-process=image%2Fformat%2Cwebp"
+    },
+    {
+      "id": "3D-03",
+      "titleKey": "projects.3D-03.title",
+      "descKey": "projects.3D-03.desc",
+      "tags": ["TPU", "Hiking", "Outdoor", "MakerWorld"],
+      "link": "https://makerworld.com/pl/models/1360025-hph-hiking-poles-holder#profileId-1404489",
+      "image": "https://makerworld.bblmw.com/makerworld/model/USc7b207c2a10f76/design/2025-04-27_00b0a4d0433b08.jpg?x-oss-process=image%2Fformat%2Cwebp"
+    }
+  ]
+}

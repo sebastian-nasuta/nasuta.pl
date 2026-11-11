@@ -6,10 +6,10 @@
   "hero": {
     "scroll": "Scroll",
     "heading": "Something is taking shape",
-    "riddle1": "Layer by layer",
-    "riddle2": "Note by note",
-    "riddle3": "Line by line",
-    "riddleFull": "Layer by layer · Note by note · Line by line",
+    "riddle1": "Line by line",
+    "riddle2": "Layer by layer",
+    "riddle3": "Note by note",
+    "riddleFull": "Line by line · Layer by layer · Note by note",
     "backToTop": "↑ Top"
   },
   "sections": {
@@ -25,17 +25,17 @@
     }
   },
   "tracks": {
+    "code": {
+      "code": "0x01 // Line by line",
+      "title": "Code & Tech"
+    },
     "3d": {
-      "code": "0x01 // Layer by layer",
+      "code": "0x02 // Layer by layer",
       "title": "3D Printing"
     },
     "bass": {
-      "code": "0x02 // Note by note",
+      "code": "0x03 // Note by note",
       "title": "Bass Guitar"
-    },
-    "code": {
-      "code": "0x03 // Line by line",
-      "title": "Code & Tech"
     }
   },
   "projects": {
