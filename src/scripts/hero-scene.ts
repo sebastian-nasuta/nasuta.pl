@@ -192,6 +192,8 @@ if (canvas && ctx) {
   let prevY: number | null = null;
   let pointerX = w * 0.5;
   let pointerY = h * 0.35;
+  let currentZ = '0.20';
+  let tempPhase = 0;
   let resonanceEnergy = 0;
   let freqTimer: ReturnType<typeof setTimeout> | undefined;
 
@@ -287,11 +289,7 @@ if (canvas && ctx) {
         }
       }
       prevY = pointerY;
-
-      if (layerTelemetry) {
-        const zVal = (Math.max(0, Math.min(1, 1 - pointerY / h)) * 48.0).toFixed(2);
-        layerTelemetry.textContent = `Z: ${zVal}mm // 215°C`;
-      }
+      currentZ = (Math.max(0, Math.min(1, 1 - pointerY / h)) * 48.0).toFixed(2);
     },
     { passive: true },
   );
@@ -442,12 +440,42 @@ if (canvas && ctx) {
 
   const states = ['<state:materializing />', '<layer:slicing />', '<signal:resonant />'];
 
+  function updateLayerTelemetry() {
+    if (!layerTelemetry) return;
+
+    let totalStringEnergy = 0;
+    let weightedHz = 0;
+
+    for (const s of strings) {
+      const e = Math.min(Math.abs(s.amp) / 18, 1.5);
+      totalStringEnergy += e;
+      weightedHz += e * s.hz;
+    }
+
+    const dominantHz = totalStringEnergy > 0.01 ? weightedHz / totalStringEnergy : 41.2;
+    const freqSpeedFactor = dominantHz / 41.2;
+
+    // Base speed matches background contour wave phase (0.024); strings accelerate it by frequency and energy
+    const phaseStep = 0.024 + Math.min(totalStringEnergy, 2.2) * 0.16 * freqSpeedFactor;
+    tempPhase += phaseStep;
+
+    const baseWaveOsc =
+      Math.sin(tempPhase) * 0.35 + Math.cos(tempPhase * 1.65) * 0.2;
+    const stringResonanceOsc =
+      Math.sin(tempPhase * 1.9) * Math.min(totalStringEnergy, 2.0) * 1.65;
+
+    const temp = (215.0 + baseWaveOsc + stringResonanceOsc).toFixed(1);
+    layerTelemetry.textContent = `Z: ${currentZ}mm // ${temp}°C`;
+    layerTelemetry.classList.toggle('active', totalStringEnergy > 0.25);
+  }
+
   function tick() {
     t += 1;
     sceneCtx.clearRect(0, 0, w, h);
 
     drawBottomEmergingWaves();
     drawForegroundStrings();
+    updateLayerTelemetry();
 
     if (t % 240 === 0 && stateReadout) {
       stateReadout.textContent = states[Math.floor(t / 240) % states.length];
