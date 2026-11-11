@@ -43,7 +43,7 @@ html {
   -webkit-text-fill-color: transparent;
 }
 
-[data-set-lang][aria-pressed="true"] {
+[data-lang-indicator][data-active="true"] {
   color: var(--amber);
   font-weight: 400;
 }

@@ -2,15 +2,15 @@ import pl from './locales/pl.json';
 import en from './locales/en.json';
 
 export const translations = {
-  pl,
   en,
+  pl,
 } as const;
 
 export type Locale = keyof typeof translations;
 
 export const locales = Object.keys(translations) as Locale[];
 
-export const defaultLocale: Locale = 'pl';
+export const defaultLocale: Locale = 'en';
 
 type NestedKeyOf<T> = T extends object
   ? {

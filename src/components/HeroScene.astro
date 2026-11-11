@@ -16,21 +16,25 @@ const DEFAULT_FREQ_READOUT = '41.20 Hz · 55.00 Hz · 73.42 Hz · 98.00 Hz';
         <a href="#top" class="text-ink tracking-[0.34em] font-normal hover:text-amber transition-colors">
           nasuta.pl
         </a>
-        <div class="inline-flex items-center gap-1.5 text-[0.62rem] tracking-[0.2em] border border-white/10 bg-white/[0.02] px-2 py-0.5" role="group" aria-label="Language switch">
+        <button
+          type="button"
+          data-lang-toggle
+          aria-label="Toggle language"
+          class="inline-flex items-center gap-1.5 text-[0.62rem] tracking-[0.2em] border border-white/10 hover:border-amber/50 bg-white/[0.02] px-2.5 py-1 transition-colors cursor-pointer"
+        >
           {locales.map((loc, idx) => (
             <>
               {idx > 0 && <span class="text-white/20">/</span>}
-              <button
-                type="button"
-                data-set-lang={loc}
-                aria-pressed={loc === defaultLocale ? 'true' : 'false'}
-                class="text-ink/45 hover:text-ink transition-colors cursor-pointer uppercase"
+              <span
+                data-lang-indicator={loc}
+                data-active={loc === defaultLocale ? 'true' : 'false'}
+                class="text-ink/45 transition-colors uppercase"
               >
                 {loc}
-              </button>
+              </span>
             </>
           ))}
-        </div>
+        </button>
       </div>
 
       <nav class="pointer-events-auto hidden md:flex items-center gap-8 text-[0.65rem] tracking-[0.26em] absolute left-1/2 -translate-x-1/2">
@@ -57,7 +61,7 @@ const DEFAULT_FREQ_READOUT = '41.20 Hz · 55.00 Hz · 73.42 Hz · 98.00 Hz';
         href="#sciezki"
         class="pointer-events-auto hidden sm:inline-flex items-center gap-2 text-ink/40 hover:text-amber transition-colors tracking-[0.3em] text-[0.6rem] absolute left-1/2 -translate-x-1/2"
       >
-        <span>SCROLL</span>
+        <span data-i18n-key="hero.scroll">{t('hero.scroll')}</span>
         <span class="text-amber">↓</span>
       </a>
       <span class="telemetry" id="layerTelemetry">Z: 0.20mm // 215°C</span>
@@ -67,10 +71,12 @@ const DEFAULT_FREQ_READOUT = '41.20 Hz · 55.00 Hz · 73.42 Hz · 98.00 Hz';
   <!-- Center-Bottom Title Block -->
   <div class="title-block" id="titleBlock">
     <p class="whisper-top">0x00 // Sic parvis magna</p>
-    <h1 class="hero-heading heading-gradient">Something is taking shape</h1>
+    <h1 data-i18n-key="hero.heading" class="hero-heading heading-gradient">
+      {t('hero.heading')}
+    </h1>
     <div class="divider" aria-hidden="true"></div>
     <p class="riddle">
-      Layer by layer<span>·</span>Note by note<span>·</span>Line by line
+      <em class="not-italic" data-i18n-key="hero.riddle1">{t('hero.riddle1')}</em><span>·</span><em class="not-italic" data-i18n-key="hero.riddle2">{t('hero.riddle2')}</em><span>·</span><em class="not-italic" data-i18n-key="hero.riddle3">{t('hero.riddle3')}</em>
     </p>
   </div>
 </section>

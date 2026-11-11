@@ -12,7 +12,7 @@ export interface RoadmapNode {
 
 export interface Track {
   id: '3d' | 'bass' | 'code';
-  code: string;
+  codeKey: TranslationKey;
   spec: string;
   titleKey: TranslationKey;
   nodes: RoadmapNode[];
@@ -44,7 +44,7 @@ export const contactLinks: ContactLink[] = [
 export const tracks: Track[] = [
   {
     id: '3d',
-    code: '0x01 // LAYER BY LAYER',
+    codeKey: 'tracks.3d.code',
     spec: 'Z: 0.20mm · 215°C · CAD/FDM',
     titleKey: 'tracks.3d.title',
     nodes: [
@@ -76,14 +76,14 @@ export const tracks: Track[] = [
   },
   {
     id: 'bass',
-    code: '0x02 // NOTE BY NOTE',
+    codeKey: 'tracks.bass.code',
     spec: '41.20 Hz – 98.00 Hz · E1–G2',
     titleKey: 'tracks.bass.title',
     nodes: [],
   },
   {
     id: 'code',
-    code: '0x03 // LINE BY LINE',
+    codeKey: 'tracks.code.code',
     spec: 'CODE · TOOLS · WEB',
     titleKey: 'tracks.code.title',
     nodes: [],
