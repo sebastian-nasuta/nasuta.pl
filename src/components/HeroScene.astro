@@ -1,4 +1,5 @@
 ---
+import Logo from './Logo.astro';
 import { defaultLocale, locales, t } from '../i18n';
 
 const DEFAULT_FREQ_READOUT = '41.20 Hz · 55.00 Hz · 73.42 Hz · 98.00 Hz';
@@ -13,8 +14,9 @@ const DEFAULT_FREQ_READOUT = '41.20 Hz · 55.00 Hz · 73.42 Hz · 98.00 Hz';
     <!-- Top HUD row -->
     <div class="relative flex justify-between items-center font-mono text-[0.68rem] max-sm:text-[0.58rem] tracking-[0.22em] max-sm:tracking-[0.14em] uppercase text-ink/45 font-light">
       <div class="pointer-events-auto flex items-center gap-4 sm:gap-6">
-        <a href="#top" class="text-ink tracking-[0.34em] font-normal hover:text-amber transition-colors">
-          nasuta.pl
+        <a href="#top" class="inline-flex items-center gap-2.5 text-ink tracking-[0.34em] font-normal hover:text-amber transition-colors">
+          <Logo class="w-5 h-5 sm:w-6 sm:h-6 shrink-0" />
+          <span>nasuta.pl</span>
         </a>
         <button
           type="button"
