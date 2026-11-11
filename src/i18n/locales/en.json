@@ -1,0 +1,43 @@
+{
+  "nav": {
+    "projects": "// Projects",
+    "contact": "// Contact"
+  },
+  "sections": {
+    "projects": {
+      "tag": "0x01 // Projects",
+      "title": "Select Domain",
+      "countLabel": "Projects",
+      "close": "[ Close × ]"
+    },
+    "contact": {
+      "tag": "0x02 // Transmission",
+      "title": "Contact"
+    }
+  },
+  "tracks": {
+    "3d": {
+      "title": "3D Printing"
+    },
+    "bass": {
+      "title": "Bass Guitar"
+    },
+    "code": {
+      "title": "Code & Tech"
+    }
+  },
+  "projects": {
+    "3D-01": {
+      "title": "AeroPress Filter Case — Twist Lid",
+      "desc": "A compact screw-top container for standard AeroPress paper filters, for home use or travel. The lid features an embossed AeroPress icon and a knurled edge for easy grip (V2 has a shorter, backwards-compatible thread). Printed with no supports required."
+    },
+    "3D-02": {
+      "title": "RPG Dice Set Box — Baby Dragon",
+      "desc": "A two-part dice box holding a full set of polyhedral RPG dice (D4–D20). Features a snap-fit lid with a two-color baby dragon hugging a D20 — designed for multicolor printing (AMS) or manual filament swaps."
+    },
+    "3D-03": {
+      "title": "HPH — Hiking Poles Holder",
+      "desc": "A backpack attachment system for trekking poles consisting of a durable holder with a mountain motif (0.12 mm layer height) and a flexible strap (0.20 mm layer height). Printed in weather-resistant TPU and glove-friendly."
+    }
+  }
+}

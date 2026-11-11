@@ -1,0 +1,43 @@
+{
+  "nav": {
+    "projects": "// Projekty",
+    "contact": "// Kontakt"
+  },
+  "sections": {
+    "projects": {
+      "tag": "0x01 // Projekty",
+      "title": "Wybierz obszar",
+      "countLabel": "Projekty",
+      "close": "[ Zamknij × ]"
+    },
+    "contact": {
+      "tag": "0x02 // Transmisja",
+      "title": "Kontakt"
+    }
+  },
+  "tracks": {
+    "3d": {
+      "title": "Druk 3D"
+    },
+    "bass": {
+      "title": "Gitara basowa"
+    },
+    "code": {
+      "title": "Kod i technologia"
+    }
+  },
+  "projects": {
+    "3D-01": {
+      "title": "AeroPress Filter Case — Twist Lid",
+      "desc": "Zakręcany pojemnik na standardowe filtry papierowe do AeroPressa, do domu i w podróż. Wieczko ma wytłoczoną ikonę AeroPressa oraz radełkowaną krawędź ułatwiającą chwyt (w wersji V2 skrócony gwint kompatybilny wstecznie). Druk bez podpór."
+    },
+    "3D-02": {
+      "title": "RPG Dice Set Box — Baby Dragon",
+      "desc": "Dwuczęściowe pudełko mieszczące pełny zestaw kości RPG (D4–D20). Wieczko zamykane na zatrzask (snap-fit) z dwukolorowym motywem małego smoka tulącego kość D20 — pod druk z AMS lub ręczną zmianą filamentu."
+    },
+    "3D-03": {
+      "title": "HPH — Hiking Poles Holder",
+      "desc": "System do mocowania kijków trekkingowych do plecaka składający się z uchwytu z motywem górskim (warstwa 0.12 mm) i elastycznego paska (warstwa 0.20 mm). Całość drukowana z wytrzymałego TPU, wygodna w obsłudze nawet w rękawiczkach."
+    }
+  }
+}

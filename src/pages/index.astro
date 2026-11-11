@@ -2,21 +2,22 @@
 import Layout from '../layouts/Layout.astro';
 import HeroScene from '../components/HeroScene.astro';
 import { tracks } from '../data/tracks';
+import { t } from '../i18n';
 ---
 
 <Layout>
   <HeroScene />
 
   <main class="relative z-10 max-w-5xl mx-auto px-6 sm:px-10 py-28 space-y-32">
-    <!-- 01 // PROJEKTY -->
+    <!-- 01 // PROJEKTY / PROJECTS -->
     <section id="sciezki" class="scroll-mt-16">
       <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pb-6 border-b border-white/[0.08]">
         <div>
-          <p class="font-mono text-[0.62rem] tracking-[0.42em] uppercase text-amber mb-2">
-            0x01 // Projekty
+          <p data-i18n-key="sections.projects.tag" class="font-mono text-[0.62rem] tracking-[0.42em] uppercase text-amber mb-2">
+            {t('sections.projects.tag')}
           </p>
-          <h2 class="text-xl sm:text-2xl font-extralight tracking-[0.24em] uppercase heading-gradient">
-            Wybierz obszar
+          <h2 data-i18n-key="sections.projects.title" class="text-xl sm:text-2xl font-extralight tracking-[0.24em] uppercase heading-gradient">
+            {t('sections.projects.title')}
           </h2>
         </div>
         <span class="font-mono text-[0.62rem] tracking-[0.22em] uppercase text-ink/40">
@@ -40,15 +41,18 @@ import { tracks } from '../data/tracks';
                 <span>{item.code}</span>
                 <span class="track-indicator w-2 h-2 rounded-full bg-white/15 group-hover:bg-amber/60 transition-colors"></span>
               </div>
-              <h3 class="text-base font-light tracking-[0.16em] uppercase text-ink group-hover:text-amber transition-colors">
-                {item.title}
+              <h3
+                data-i18n-key={item.titleKey}
+                class="text-base font-light tracking-[0.16em] uppercase text-ink group-hover:text-amber transition-colors"
+              >
+                {t(item.titleKey)}
               </h3>
             </div>
 
             <div class="mt-6 pt-4 border-t border-white/[0.06] flex items-center justify-between gap-2 font-mono text-[0.58rem] tracking-[0.2em] uppercase">
               <span class="text-ink/35">{item.spec}</span>
               <span class="track-cta text-amber/75 group-hover:text-amber transition-colors">
-                Projekty ({item.nodes.length}) ↓
+                <span data-i18n-key="sections.projects.countLabel">{t('sections.projects.countLabel')}</span> ({item.nodes.length}) ↓
               </span>
             </div>
           </button>
@@ -72,8 +76,11 @@ import { tracks } from '../data/tracks';
                   <p class="font-mono text-[0.6rem] tracking-[0.35em] uppercase text-amber">
                     {track.code}
                   </p>
-                  <h3 class="text-lg sm:text-xl font-light tracking-[0.18em] uppercase text-ink mt-1">
-                    {track.title}
+                  <h3
+                    data-i18n-key={track.titleKey}
+                    class="text-lg sm:text-xl font-light tracking-[0.18em] uppercase text-ink mt-1"
+                  >
+                    {t(track.titleKey)}
                   </h3>
                 </div>
               </div>
@@ -81,9 +88,10 @@ import { tracks } from '../data/tracks';
               <button
                 type="button"
                 data-close-track
+                data-i18n-key="sections.projects.close"
                 class="self-start sm:self-auto font-mono text-[0.6rem] tracking-[0.25em] uppercase text-ink/45 hover:text-amber border border-white/10 hover:border-amber/40 px-3 py-1.5 transition-colors cursor-pointer"
               >
-                [ Zamknij × ]
+                {t('sections.projects.close')}
               </button>
             </div>
 
@@ -143,7 +151,7 @@ import { tracks } from '../data/tracks';
                             <div class="project-thumb relative shrink-0 sm:w-48 aspect-[4/3] overflow-hidden border border-white/[0.06] bg-bg">
                               <img
                                 src={node.image}
-                                alt={node.title}
+                                alt={t(node.titleKey)}
                                 loading="lazy"
                                 class="project-thumb-img w-full h-full object-cover"
                               />
@@ -158,8 +166,11 @@ import { tracks } from '../data/tracks';
                             </div>
 
                             <div class="flex items-baseline justify-between gap-4">
-                              <h4 class="text-base sm:text-lg font-light tracking-[0.14em] uppercase text-ink group-hover:text-amber transition-colors">
-                                {node.title}
+                              <h4
+                                data-i18n-key={node.titleKey}
+                                class="text-base sm:text-lg font-light tracking-[0.14em] uppercase text-ink group-hover:text-amber transition-colors"
+                              >
+                                {t(node.titleKey)}
                               </h4>
                               {node.link && (
                                 <span class="font-mono text-xs text-ink/35 group-hover:text-amber transition-colors shrink-0">
@@ -168,8 +179,11 @@ import { tracks } from '../data/tracks';
                               )}
                             </div>
 
-                            <p class="mt-2.5 text-sm font-extralight text-ink/65 leading-relaxed">
-                              {node.desc}
+                            <p
+                              data-i18n-key={node.descKey}
+                              class="mt-2.5 text-sm font-extralight text-ink/65 leading-relaxed"
+                            >
+                              {t(node.descKey)}
                             </p>
 
                             <div class="mt-5 flex flex-wrap gap-2">
@@ -196,15 +210,15 @@ import { tracks } from '../data/tracks';
       </div>
     </section>
 
-    <!-- 02 // KONTAKT -->
+    <!-- 02 // KONTAKT / CONTACT -->
     <section id="kontakt" class="scroll-mt-16">
       <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pb-6 border-b border-white/[0.08]">
         <div>
-          <p class="font-mono text-[0.62rem] tracking-[0.42em] uppercase text-amber mb-2">
-            0x02 // Transmisja
+          <p data-i18n-key="sections.contact.tag" class="font-mono text-[0.62rem] tracking-[0.42em] uppercase text-amber mb-2">
+            {t('sections.contact.tag')}
           </p>
-          <h2 class="text-xl sm:text-2xl font-extralight tracking-[0.24em] uppercase heading-gradient">
-            Kontakt
+          <h2 data-i18n-key="sections.contact.title" class="text-xl sm:text-2xl font-extralight tracking-[0.24em] uppercase heading-gradient">
+            {t('sections.contact.title')}
           </h2>
         </div>
         <span class="font-mono text-[0.62rem] tracking-[0.22em] uppercase text-ink/40">
