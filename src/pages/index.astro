@@ -40,12 +40,9 @@ import { tracks } from '../data/tracks';
                 <span>{item.code}</span>
                 <span class="track-indicator w-2 h-2 rounded-full bg-white/15 group-hover:bg-amber/60 transition-colors"></span>
               </div>
-              <h3 class="text-base font-light tracking-[0.16em] uppercase text-ink mb-3 group-hover:text-amber transition-colors">
+              <h3 class="text-base font-light tracking-[0.16em] uppercase text-ink group-hover:text-amber transition-colors">
                 {item.title}
               </h3>
-              <p class="text-sm font-extralight text-ink/60 leading-relaxed">
-                {item.desc}
-              </p>
             </div>
 
             <div class="mt-6 pt-4 border-t border-white/[0.06] flex items-center justify-between gap-2 font-mono text-[0.58rem] tracking-[0.2em] uppercase">
@@ -91,103 +88,109 @@ import { tracks } from '../data/tracks';
             </div>
 
             <!-- Oś projektów w tej ścieżce (od najnowszego na górze do 01 na dole) -->
-            <div class="mt-10 relative space-y-6">
-              {[...track.nodes].reverse().map((node, idx, arr) => {
-                const CardTag = node.link ? 'a' : 'div';
-                const linkProps = node.link
-                  ? {
-                      href: node.link,
-                      target: node.link.startsWith('http') ? '_blank' : undefined,
-                      rel: node.link.startsWith('http') ? 'noopener noreferrer' : undefined,
-                    }
-                  : {};
-                return (
-                  <article class="relative pl-8 sm:pl-10 group">
-                    {/* Urwana ścieżka wychodząca w górę nad najnowszym projektem */}
-                    {idx === 0 && (
+            {track.nodes.length > 0 ? (
+              <div class="mt-10 relative space-y-6">
+                {[...track.nodes].reverse().map((node, idx, arr) => {
+                  const CardTag = node.link ? 'a' : 'div';
+                  const linkProps = node.link
+                    ? {
+                        href: node.link,
+                        target: node.link.startsWith('http') ? '_blank' : undefined,
+                        rel: node.link.startsWith('http') ? 'noopener noreferrer' : undefined,
+                      }
+                    : {};
+                  return (
+                    <article class="relative pl-8 sm:pl-10 group">
+                      {/* Urwana ścieżka wychodząca w górę nad najnowszym projektem */}
+                      {idx === 0 && (
+                        <span
+                          aria-hidden="true"
+                          class="absolute left-[7px] -top-6 h-12 w-px bg-gradient-to-t from-amber/75 to-transparent"
+                        ></span>
+                      )}
+
+                      {/* Odcinek linii łączący ten punkt z punktem poniżej (brak linii pod pierwszym projektem 01 na samym dole) */}
+                      {idx < arr.length - 1 && (
+                        <span
+                          aria-hidden="true"
+                          class="absolute left-[7px] top-6 -bottom-12 w-px bg-gradient-to-b from-amber/40 via-white/15 to-white/15"
+                        ></span>
+                      )}
+
+                      <!-- Punkt na osi (szerokość 15px -> środek dokładnie na 7.5px) -->
                       <span
                         aria-hidden="true"
-                        class="absolute left-[7px] -top-6 h-12 w-px bg-gradient-to-t from-amber/75 to-transparent"
+                        class="absolute left-0 top-6 -translate-y-1/2 z-10 w-[15px] h-[15px] rounded-full border-[3px] border-bg bg-amber shadow-[0_0_10px_rgba(223,155,82,0.65)] transition-transform group-hover:scale-125"
                       ></span>
-                    )}
-
-                    {/* Odcinek linii łączący ten punkt z punktem poniżej (brak linii pod pierwszym projektem 01 na samym dole) */}
-                    {idx < arr.length - 1 && (
+                      <!-- Poziomy łącznik od kropki do ramki projektu -->
                       <span
                         aria-hidden="true"
-                        class="absolute left-[7px] top-6 -bottom-12 w-px bg-gradient-to-b from-amber/40 via-white/15 to-white/15"
-                      ></span>
-                    )}
-
-                    <!-- Punkt na osi (szerokość 15px -> środek dokładnie na 7.5px) -->
-                    <span
-                      aria-hidden="true"
-                      class="absolute left-0 top-6 -translate-y-1/2 z-10 w-[15px] h-[15px] rounded-full border-[3px] border-bg bg-amber shadow-[0_0_10px_rgba(223,155,82,0.65)] transition-transform group-hover:scale-125"
-                    ></span>
-                    <!-- Poziomy łącznik od kropki do ramki projektu -->
-                    <span
-                      aria-hidden="true"
-                      class="absolute left-[15px] top-6 -translate-y-1/2 w-[17px] sm:w-[25px] h-px bg-white/15 group-hover:bg-amber/50 transition-colors"
-                    ></span>
-
-                    <CardTag
-                      {...linkProps}
-                      class={`project-card relative overflow-hidden block p-5 sm:p-6 border border-white/[0.07] bg-bg/70 transition-all duration-500 ${node.link ? 'cursor-pointer' : ''}`}
-                    >
-                      <!-- Subtelna poświata na górnej krawędzi karty budząca się po najechaniu -->
-                      <span
-                        aria-hidden="true"
-                        class="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-amber/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+                        class="absolute left-[15px] top-6 -translate-y-1/2 w-[17px] sm:w-[25px] h-px bg-white/15 group-hover:bg-amber/50 transition-colors"
                       ></span>
 
-                      <div class="relative z-10 flex flex-col sm:flex-row gap-5 sm:gap-6">
-                        {node.image && (
-                          <div class="project-thumb relative shrink-0 sm:w-48 aspect-[4/3] overflow-hidden border border-white/[0.06] bg-bg">
-                            <img
-                              src={node.image}
-                              alt={node.title}
-                              loading="lazy"
-                              class="project-thumb-img w-full h-full object-cover"
-                            />
-                            <div aria-hidden="true" class="project-thumb-shroud absolute inset-0 pointer-events-none"></div>
-                            <div aria-hidden="true" class="project-thumb-sheen absolute inset-0 pointer-events-none"></div>
-                          </div>
-                        )}
+                      <CardTag
+                        {...linkProps}
+                        class={`project-card relative overflow-hidden block p-5 sm:p-6 border border-white/[0.07] bg-bg/70 transition-all duration-500 ${node.link ? 'cursor-pointer' : ''}`}
+                      >
+                        <!-- Subtelna poświata na górnej krawędzi karty budząca się po najechaniu -->
+                        <span
+                          aria-hidden="true"
+                          class="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-amber/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+                        ></span>
 
-                        <div class="flex-1 min-w-0">
-                          <div class="flex flex-wrap items-center justify-between gap-2 font-mono text-[0.6rem] tracking-[0.24em] uppercase mb-2">
-                            <span class="text-amber/80">{node.id}{node.date ? ` · ${node.date}` : ''}</span>
-                          </div>
+                        <div class="relative z-10 flex flex-col sm:flex-row gap-5 sm:gap-6">
+                          {node.image && (
+                            <div class="project-thumb relative shrink-0 sm:w-48 aspect-[4/3] overflow-hidden border border-white/[0.06] bg-bg">
+                              <img
+                                src={node.image}
+                                alt={node.title}
+                                loading="lazy"
+                                class="project-thumb-img w-full h-full object-cover"
+                              />
+                              <div aria-hidden="true" class="project-thumb-shroud absolute inset-0 pointer-events-none"></div>
+                              <div aria-hidden="true" class="project-thumb-sheen absolute inset-0 pointer-events-none"></div>
+                            </div>
+                          )}
 
-                          <div class="flex items-baseline justify-between gap-4">
-                            <h4 class="text-base sm:text-lg font-light tracking-[0.14em] uppercase text-ink group-hover:text-amber transition-colors">
-                              {node.title}
-                            </h4>
-                            {node.link && (
-                              <span class="font-mono text-xs text-ink/35 group-hover:text-amber transition-colors shrink-0">
-                                ↗
-                              </span>
-                            )}
-                          </div>
+                          <div class="flex-1 min-w-0">
+                            <div class="flex flex-wrap items-center justify-between gap-2 font-mono text-[0.6rem] tracking-[0.24em] uppercase mb-2">
+                              <span class="text-amber/80">{node.id}{node.date ? ` · ${node.date}` : ''}</span>
+                            </div>
 
-                          <p class="mt-2.5 text-sm font-extralight text-ink/65 leading-relaxed">
-                            {node.desc}
-                          </p>
+                            <div class="flex items-baseline justify-between gap-4">
+                              <h4 class="text-base sm:text-lg font-light tracking-[0.14em] uppercase text-ink group-hover:text-amber transition-colors">
+                                {node.title}
+                              </h4>
+                              {node.link && (
+                                <span class="font-mono text-xs text-ink/35 group-hover:text-amber transition-colors shrink-0">
+                                  ↗
+                                </span>
+                              )}
+                            </div>
 
-                          <div class="mt-5 flex flex-wrap gap-2">
-                            {node.tags.map((tag) => (
-                              <span class="px-2.5 py-0.5 border border-white/[0.08] font-mono text-[0.56rem] tracking-[0.2em] uppercase text-ink/45">
-                                {tag}
-                              </span>
-                            ))}
+                            <p class="mt-2.5 text-sm font-extralight text-ink/65 leading-relaxed">
+                              {node.desc}
+                            </p>
+
+                            <div class="mt-5 flex flex-wrap gap-2">
+                              {node.tags.map((tag) => (
+                                <span class="px-2.5 py-0.5 border border-white/[0.08] font-mono text-[0.56rem] tracking-[0.2em] uppercase text-ink/45">
+                                  {tag}
+                                </span>
+                              ))}
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    </CardTag>
-                  </article>
-                );
-              })}
-            </div>
+                      </CardTag>
+                    </article>
+                  );
+                })}
+              </div>
+            ) : (
+              <div class="mt-8 py-8 text-center font-mono text-xs tracking-[0.24em] uppercase text-ink/35">
+                &lt;empty /&gt;
+              </div>
+            )}
           </div>
         ))}
       </div>
@@ -201,7 +204,7 @@ import { tracks } from '../data/tracks';
             0x02 // Transmisja
           </p>
           <h2 class="text-xl sm:text-2xl font-extralight tracking-[0.24em] uppercase heading-gradient">
-            Kontakt &amp; Sieć
+            Kontakt
           </h2>
         </div>
         <span class="font-mono text-[0.62rem] tracking-[0.22em] uppercase text-ink/40">
