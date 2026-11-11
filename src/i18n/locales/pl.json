@@ -14,28 +14,12 @@
   },
   "sections": {
     "projects": {
-      "tag": "0x01 // Projekty",
-      "title": "Wybierz obszar",
-      "countLabel": "Projekty",
-      "close": "[ Zamknij × ]"
+      "tag": "0x01 // Res, non verba",
+      "title": "Projekty"
     },
     "contact": {
-      "tag": "0x02 // Transmisja",
+      "tag": "0x02 // Ad rem",
       "title": "Kontakt"
-    }
-  },
-  "tracks": {
-    "code": {
-      "code": "0x01 // Linia po linii",
-      "title": "Kod i technologia"
-    },
-    "3d": {
-      "code": "0x02 // Warstwa po warstwie",
-      "title": "Druk 3D"
-    },
-    "bass": {
-      "code": "0x03 // Nuta po nucie",
-      "title": "Gitara basowa"
     }
   },
   "projects": {

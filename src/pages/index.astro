@@ -7,8 +7,8 @@ import SectionHeader from '../components/SectionHeader.astro';
 import ProjectCard from '../components/ProjectCard.astro';
 import { t } from '../i18n';
 
-const trackEntries = await getCollection('tracks');
-const tracks = trackEntries.sort((a, b) => a.data.order - b.data.order);
+const projectEntries = await getCollection('projects');
+const projects = [...projectEntries].reverse().map((entry) => entry.data);
 const contactEntries = await getCollection('contacts');
 ---
 
@@ -21,101 +21,17 @@ const contactEntries = await getCollection('contacts');
       <SectionHeader
         tagKey="sections.projects.tag"
         titleKey="sections.projects.title"
-        statusTag="<select:domain />"
+        statusTag="<z:0.20mm // 215°C />"
       />
 
-      <!-- Domain selector cards -->
-      <div class="mt-10 grid md:grid-cols-3 gap-6" role="tablist" aria-label="Project domains">
-        {tracks.map(({ id, data }) => (
-          <button
-            type="button"
-            role="tab"
-            aria-selected="false"
-            aria-controls={`panel-${id}`}
-            data-track-btn={id}
-            class="track-card group relative text-left p-6 border border-white/[0.08] bg-white/[0.015] hover:border-amber/45 hover:bg-white/[0.025] transition-all duration-300 flex flex-col justify-between cursor-pointer focus:outline-none focus-visible:border-amber"
-          >
-            <div>
-              <div class="flex items-center justify-between gap-2 font-mono text-[0.58rem] tracking-[0.24em] uppercase text-amber/90 mb-4">
-                <span data-i18n-key={data.codeKey}>{t(data.codeKey)}</span>
-                <span class="track-indicator w-2 h-2 rounded-full bg-white/15 group-hover:bg-amber/60 transition-colors"></span>
-              </div>
-              <h3
-                data-i18n-key={data.titleKey}
-                class="text-base font-light tracking-[0.16em] uppercase text-ink group-hover:text-amber transition-colors"
-              >
-                {t(data.titleKey)}
-              </h3>
-            </div>
-
-            <div class="mt-6 pt-4 border-t border-white/[0.06] flex items-center justify-between gap-2 font-mono text-[0.58rem] tracking-[0.2em] uppercase">
-              <span class="text-ink/35">{data.spec}</span>
-              <span class="track-cta text-amber/75 group-hover:text-amber transition-colors">
-                <span data-i18n-key="sections.projects.countLabel">{t('sections.projects.countLabel')}</span> ({data.nodes.length}) ↓
-              </span>
-            </div>
-          </button>
+      <div class="mt-12 relative space-y-6">
+        {projects.map((node, idx) => (
+          <ProjectCard
+            node={node}
+            isFirst={idx === 0}
+            isLast={idx === projects.length - 1}
+          />
         ))}
-      </div>
-
-      <!-- Expandable project panels -->
-      <div id="roadmap-wrapper" class="mt-10">
-        {tracks.map(({ id, data }) => {
-          const reversedNodes = [...data.nodes].reverse();
-          return (
-            <div
-              id={`panel-${id}`}
-              role="tabpanel"
-              data-track-panel={id}
-              class="track-panel hidden border border-amber/30 bg-white/[0.012] p-6 sm:p-10 relative"
-            >
-              <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-white/[0.08]">
-                <div class="flex items-center gap-3">
-                  <span class="w-2 h-2 rounded-full bg-amber shadow-[0_0_10px_#df9b52]"></span>
-                  <div>
-                    <p
-                      data-i18n-key={data.codeKey}
-                      class="font-mono text-[0.6rem] tracking-[0.35em] uppercase text-amber"
-                    >
-                      {t(data.codeKey)}
-                    </p>
-                    <h3
-                      data-i18n-key={data.titleKey}
-                      class="text-lg sm:text-xl font-light tracking-[0.18em] uppercase text-ink mt-1"
-                    >
-                      {t(data.titleKey)}
-                    </h3>
-                  </div>
-                </div>
-
-                <button
-                  type="button"
-                  data-close-track
-                  data-i18n-key="sections.projects.close"
-                  class="self-start sm:self-auto font-mono text-[0.6rem] tracking-[0.25em] uppercase text-ink/45 hover:text-amber border border-white/10 hover:border-amber/40 px-3 py-1.5 transition-colors cursor-pointer"
-                >
-                  {t('sections.projects.close')}
-                </button>
-              </div>
-
-              {reversedNodes.length > 0 ? (
-                <div class="mt-10 relative space-y-6">
-                  {reversedNodes.map((node, idx) => (
-                    <ProjectCard
-                      node={node}
-                      isFirst={idx === 0}
-                      isLast={idx === reversedNodes.length - 1}
-                    />
-                  ))}
-                </div>
-              ) : (
-                <div class="mt-8 py-8 text-center font-mono text-xs tracking-[0.24em] uppercase text-ink/35">
-                  &lt;empty /&gt;
-                </div>
-              )}
-            </div>
-          );
-        })}
       </div>
     </section>
 
@@ -155,73 +71,3 @@ const contactEntries = await getCollection('contacts');
     </div>
   </footer>
 </Layout>
-
-<style>
-  .track-card[aria-selected="true"] {
-    border-color: rgba(223, 155, 82, 0.75);
-    background-color: rgba(223, 155, 82, 0.04);
-  }
-
-  .track-card[aria-selected="true"] .track-indicator {
-    background-color: var(--amber);
-    box-shadow: 0 0 10px var(--amber);
-  }
-
-  .track-card[aria-selected="true"] .track-cta {
-    color: var(--amber);
-  }
-
-  .track-panel {
-    animation: panelFade 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-  }
-
-  @keyframes panelFade {
-    from {
-      opacity: 0;
-      transform: translateY(-6px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-</style>
-
-<script>
-  const buttons = document.querySelectorAll<HTMLElement>('[data-track-btn]');
-  const panels = document.querySelectorAll<HTMLElement>('[data-track-panel]');
-  const closeBtns = document.querySelectorAll<HTMLElement>('[data-close-track]');
-
-  function selectTrack(trackId: string | null, shouldScroll: boolean) {
-    let openedPanel: HTMLElement | null = null;
-
-    buttons.forEach((btn) => {
-      btn.setAttribute('aria-selected', String(btn.dataset.trackBtn === trackId));
-    });
-
-    panels.forEach((panel) => {
-      const isMatch = panel.dataset.trackPanel === trackId;
-      panel.classList.toggle('hidden', !isMatch);
-      if (isMatch) openedPanel = panel;
-    });
-
-    if (shouldScroll && openedPanel) {
-      const target = openedPanel;
-      setTimeout(() => {
-        target.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-      }, 60);
-    }
-  }
-
-  buttons.forEach((btn) => {
-    btn.addEventListener('click', () => {
-      const id = btn.dataset.trackBtn ?? null;
-      const isAlreadySelected = btn.getAttribute('aria-selected') === 'true';
-      selectTrack(isAlreadySelected ? null : id, !isAlreadySelected);
-    });
-  });
-
-  closeBtns.forEach((btn) => {
-    btn.addEventListener('click', () => selectTrack(null, false));
-  });
-</script>

@@ -14,28 +14,12 @@
   },
   "sections": {
     "projects": {
-      "tag": "0x01 // Projects",
-      "title": "Select Domain",
-      "countLabel": "Projects",
-      "close": "[ Close × ]"
+      "tag": "0x01 // Res, non verba",
+      "title": "Projects"
     },
     "contact": {
-      "tag": "0x02 // Transmission",
+      "tag": "0x02 // Ad rem",
       "title": "Contact"
-    }
-  },
-  "tracks": {
-    "code": {
-      "code": "0x01 // Line by line",
-      "title": "Code & Tech"
-    },
-    "3d": {
-      "code": "0x02 // Layer by layer",
-      "title": "3D Printing"
-    },
-    "bass": {
-      "code": "0x03 // Note by note",
-      "title": "Bass Guitar"
     }
   },
   "projects": {

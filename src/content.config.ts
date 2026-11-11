@@ -1,24 +1,16 @@
 import { defineCollection, z } from 'astro:content';
-import { file, glob } from 'astro/loaders';
+import { file } from 'astro/loaders';
 
-const tracks = defineCollection({
-  loader: glob({ pattern: '*.json', base: './src/data/tracks' }),
+const projects = defineCollection({
+  loader: file('src/data/projects.json'),
   schema: z.object({
-    order: z.number(),
-    codeKey: z.string(),
-    spec: z.string(),
+    id: z.string(),
+    date: z.string().optional(),
     titleKey: z.string(),
-    nodes: z.array(
-      z.object({
-        id: z.string(),
-        date: z.string().optional(),
-        titleKey: z.string(),
-        descKey: z.string(),
-        tags: z.array(z.string()),
-        link: z.string().optional(),
-        image: z.string().optional(),
-      }),
-    ),
+    descKey: z.string(),
+    tags: z.array(z.string()),
+    link: z.string().optional(),
+    image: z.string().optional(),
   }),
 });
 
@@ -32,4 +24,4 @@ const contacts = defineCollection({
   }),
 });
 
-export const collections = { tracks, contacts };
+export const collections = { projects, contacts };
