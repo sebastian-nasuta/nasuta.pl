@@ -6,10 +6,6 @@
   "hero": {
     "scroll": "Scroll",
     "heading": "Something is taking shape",
-    "riddle1": "Line by line",
-    "riddle2": "Layer by layer",
-    "riddle3": "Note by note",
-    "riddleFull": "Line by line · Layer by layer · Note by note",
     "backToTop": "↑ Top"
   },
   "sections": {

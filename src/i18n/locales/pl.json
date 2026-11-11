@@ -6,10 +6,6 @@
   "hero": {
     "scroll": "Przewiń",
     "heading": "Coś nabiera kształtu",
-    "riddle1": "Linia po linii",
-    "riddle2": "Warstwa po warstwie",
-    "riddle3": "Nuta po nucie",
-    "riddleFull": "Linia po linii · Warstwa po warstwie · Nuta po nucie",
     "backToTop": "↑ Góra"
   },
   "sections": {

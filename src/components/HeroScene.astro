@@ -39,12 +39,22 @@ const DEFAULT_FREQ_READOUT = '41.20 Hz · 55.00 Hz · 73.42 Hz · 98.00 Hz';
         </button>
       </div>
 
-      <nav class="pointer-events-auto hidden md:flex items-center gap-8 text-[0.65rem] tracking-[0.26em] absolute left-1/2 -translate-x-1/2">
-        <a href="#projects" data-i18n-key="nav.projects" class="text-ink/55 hover:text-amber transition-colors">
-          {t('nav.projects')}
+      <nav class="pointer-events-auto hidden md:block text-[0.65rem] tracking-[0.22em] absolute left-1/2 top-1/2 -translate-y-1/2">
+        <a href="#projects" class="nav-node group inline-flex items-center w-max whitespace-nowrap py-1 absolute right-2.5 top-1/2 -translate-y-1/2">
+          <span class="text-white/25 group-hover:text-amber/70 transition-colors">[</span>
+          <span class="px-1.5 text-ink/60 group-hover:text-amber transition-colors">0x01</span>
+          <span class="nav-label text-ink/80">
+            <span class="pr-1.5" data-i18n-key="nav.projects">{t('nav.projects')}</span>
+          </span>
+          <span class="text-white/25 group-hover:text-amber/70 transition-colors">]</span>
         </a>
-        <a href="#contact" data-i18n-key="nav.contact" class="text-ink/55 hover:text-amber transition-colors">
-          {t('nav.contact')}
+        <a href="#contact" class="nav-node group inline-flex items-center w-max whitespace-nowrap py-1 absolute left-2.5 top-1/2 -translate-y-1/2">
+          <span class="text-white/25 group-hover:text-amber/70 transition-colors">[</span>
+          <span class="px-1.5 text-ink/60 group-hover:text-amber transition-colors">0x02</span>
+          <span class="nav-label text-ink/80">
+            <span class="pr-1.5" data-i18n-key="nav.contact">{t('nav.contact')}</span>
+          </span>
+          <span class="text-white/25 group-hover:text-amber/70 transition-colors">]</span>
         </a>
       </nav>
 
@@ -78,7 +88,7 @@ const DEFAULT_FREQ_READOUT = '41.20 Hz · 55.00 Hz · 73.42 Hz · 98.00 Hz';
     </h1>
     <div class="divider" aria-hidden="true"></div>
     <p class="riddle">
-      <em class="not-italic" data-i18n-key="hero.riddle1">{t('hero.riddle1')}</em><span>·</span><em class="not-italic" data-i18n-key="hero.riddle2">{t('hero.riddle2')}</em><span>·</span><em class="not-italic" data-i18n-key="hero.riddle3">{t('hero.riddle3')}</em>
+      <em class="not-italic">Line by line</em><span>·</span><em class="not-italic">Layer by layer</em><span>·</span><em class="not-italic">Note by note</em>
     </p>
   </div>
 </section>
@@ -173,6 +183,24 @@ const DEFAULT_FREQ_READOUT = '41.20 Hz · 55.00 Hz · 73.42 Hz · 98.00 Hz';
 
   .telemetry.active {
     color: var(--amber);
+  }
+
+  .nav-label {
+    display: inline-block;
+    max-width: 0;
+    opacity: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    vertical-align: bottom;
+    transition:
+      max-width 0.38s cubic-bezier(0.16, 1, 0.3, 1),
+      opacity 0.25s ease;
+  }
+
+  .nav-node:hover .nav-label,
+  .nav-node:focus-visible .nav-label {
+    max-width: 12rem;
+    opacity: 1;
   }
 
   @keyframes fadeUp {
