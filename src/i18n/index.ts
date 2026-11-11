@@ -22,6 +22,10 @@ type NestedKeyOf<T> = T extends object
 
 export type TranslationKey = NestedKeyOf<typeof pl>;
 
+export function isLocale(value: unknown): value is Locale {
+  return typeof value === 'string' && value in translations;
+}
+
 function getByPath(obj: unknown, path: string): string | undefined {
   const result = path.split('.').reduce<unknown>((acc, part) => {
     if (acc && typeof acc === 'object' && part in acc) {
@@ -32,7 +36,7 @@ function getByPath(obj: unknown, path: string): string | undefined {
   return typeof result === 'string' ? result : undefined;
 }
 
-export function t(key: TranslationKey, locale: Locale = defaultLocale): string {
+export function t(key: TranslationKey | string, locale: Locale = defaultLocale): string {
   return (
     getByPath(translations[locale], key) ??
     getByPath(translations[defaultLocale], key) ??

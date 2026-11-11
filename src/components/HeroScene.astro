@@ -1,5 +1,7 @@
 ---
 import { defaultLocale, locales, t } from '../i18n';
+
+const DEFAULT_FREQ_READOUT = '41.20 Hz · 55.00 Hz · 73.42 Hz · 98.00 Hz';
 ---
 
 <section class="relative w-full h-screen min-h-[640px] overflow-hidden select-none border-b border-white/[0.07]" id="top">
@@ -48,7 +50,9 @@ import { defaultLocale, locales, t } from '../i18n';
 
     <!-- Bottom HUD row -->
     <div class="relative flex justify-between items-center font-mono text-[0.68rem] max-sm:text-[0.58rem] tracking-[0.22em] max-sm:tracking-[0.14em] uppercase text-ink/45 font-light">
-      <span class="telemetry" id="freqTelemetry">41.20 Hz · 55.00 Hz · 73.42 Hz · 98.00 Hz</span>
+      <span class="telemetry" id="freqTelemetry" data-default-text={DEFAULT_FREQ_READOUT}>
+        {DEFAULT_FREQ_READOUT}
+      </span>
       <a
         href="#sciezki"
         class="pointer-events-auto hidden sm:inline-flex items-center gap-2 text-ink/40 hover:text-amber transition-colors tracking-[0.3em] text-[0.6rem] absolute left-1/2 -translate-x-1/2"
@@ -60,10 +64,10 @@ import { defaultLocale, locales, t } from '../i18n';
     </div>
   </div>
 
-  <!-- Center-Bottom Title Block (identical positioning to nasuta.pl-temp) -->
+  <!-- Center-Bottom Title Block -->
   <div class="title-block" id="titleBlock">
     <p class="whisper-top">0x00 // Sic parvis magna</p>
-    <h1 class="hero-heading">Something is taking shape</h1>
+    <h1 class="hero-heading heading-gradient">Something is taking shape</h1>
     <div class="divider" aria-hidden="true"></div>
     <p class="riddle">
       Layer by layer<span>·</span>Note by note<span>·</span>Line by line
@@ -123,9 +127,6 @@ import { defaultLocale, locales, t } from '../i18n';
     color: var(--ink);
     line-height: 1.3;
     margin-right: -0.28em;
-    background: linear-gradient(90deg, rgba(240,237,230,0.75) 0%, #ffffff 50%, rgba(223,155,82,0.88) 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
     opacity: 0;
     animation: fadeUp 1.8s cubic-bezier(0.16, 1, 0.3, 1) 0.45s forwards;
   }
@@ -194,42 +195,45 @@ import { defaultLocale, locales, t } from '../i18n';
   }
 </style>
 
-<script is:inline>
-  (function () {
-    const canvas = document.getElementById("scene");
-    if (!canvas) return;
-    const ctx = canvas.getContext("2d");
-    const titleBlock = document.getElementById("titleBlock");
-    const freqTelemetry = document.getElementById("freqTelemetry");
-    const layerTelemetry = document.getElementById("layerTelemetry");
-    const stateReadout = document.getElementById("stateReadout");
+<script>
+  const canvas = document.getElementById('scene') as HTMLCanvasElement | null;
+  const ctx = canvas?.getContext('2d');
+
+  if (canvas && ctx) {
+    const sceneCanvas = canvas;
+    const sceneCtx = ctx;
+    const titleBlock = document.getElementById('titleBlock');
+    const freqTelemetry = document.getElementById('freqTelemetry');
+    const layerTelemetry = document.getElementById('layerTelemetry');
+    const stateReadout = document.getElementById('stateReadout');
+    const defaultFreqText = freqTelemetry?.dataset.defaultText ?? '';
 
     let w = 0;
     let h = 0;
-    let dpr = Math.min(window.devicePixelRatio || 1, 2);
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
 
     function resize() {
-      const rect = canvas.getBoundingClientRect();
+      const rect = sceneCanvas.getBoundingClientRect();
       w = rect.width || window.innerWidth;
       h = rect.height || window.innerHeight;
-      canvas.width = w * dpr;
-      canvas.height = h * dpr;
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      sceneCanvas.width = w * dpr;
+      sceneCanvas.height = h * dpr;
+      sceneCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
     }
 
-    window.addEventListener("resize", resize);
+    window.addEventListener('resize', resize);
     resize();
 
     // Web Audio bass string synthesis
-    let audioCtx = null;
-    let masterBus = null;
+    let audioCtx: AudioContext | null = null;
+    let masterBus: DynamicsCompressorNode | null = null;
 
-    function ensureAudioContext() {
+    function ensureAudioContext(): AudioContext | null {
       try {
         if (!audioCtx) {
-          const AudioContext = window.AudioContext || window.webkitAudioContext;
-          if (!AudioContext) return null;
-          audioCtx = new AudioContext();
+          const AudioCtx = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
+          if (!AudioCtx) return null;
+          audioCtx = new AudioCtx();
 
           const compressor = audioCtx.createDynamicsCompressor();
           compressor.threshold.setValueAtTime(-14, audioCtx.currentTime);
@@ -240,163 +244,176 @@ import { defaultLocale, locales, t } from '../i18n';
           compressor.connect(audioCtx.destination);
           masterBus = compressor;
         }
-        if (audioCtx.state === "suspended") {
-          audioCtx.resume().catch(function () {});
+        if (audioCtx.state === 'suspended') {
+          audioCtx.resume().catch(() => {});
         }
         return audioCtx;
-      } catch (_) {
+      } catch {
         return null;
       }
     }
 
-    function playSubtleBassTone(freq, velocity) {
-      try {
-        const ctxAudio = ensureAudioContext();
-        if (!ctxAudio || !masterBus) return;
+    function playSubtleBassTone(freq: number, velocity = 0.75) {
+      const ctxAudio = ensureAudioContext();
+      if (!ctxAudio || !masterBus) return;
 
-        const vel = Math.max(0.35, Math.min(1.0, velocity || 0.75));
+      const vel = Math.max(0.35, Math.min(1.0, velocity));
+      const bus = masterBus;
 
-        function triggerVoice() {
-          const now = ctxAudio.currentTime;
-          const duration = 2.4;
+      const triggerVoice = () => {
+        const now = ctxAudio.currentTime;
+        const duration = 2.4;
 
-          const oscFund = ctxAudio.createOscillator();
-          oscFund.type = "triangle";
-          oscFund.frequency.setValueAtTime(freq * 1.008, now);
-          oscFund.frequency.exponentialRampToValueAtTime(freq, now + 0.045);
+        const filter = ctxAudio.createBiquadFilter();
+        filter.type = 'lowpass';
+        filter.Q.setValueAtTime(2.4, now);
+        const attackCutoff = Math.min(2800, Math.max(freq * 10, 620)) * (0.65 + 0.35 * vel);
+        filter.frequency.setValueAtTime(attackCutoff, now);
+        filter.frequency.exponentialRampToValueAtTime(freq * 3.2, now + 0.28);
+        filter.frequency.exponentialRampToValueAtTime(freq * 1.5, now + duration);
 
-          const oscHarm = ctxAudio.createOscillator();
-          oscHarm.type = "sawtooth";
-          oscHarm.frequency.setValueAtTime(freq, now);
-          oscHarm.detune.setValueAtTime(3.5, now);
+        const voiceGain = ctxAudio.createGain();
+        const peakGain = 0.28 * vel;
+        voiceGain.gain.setValueAtTime(0.0001, now);
+        voiceGain.gain.linearRampToValueAtTime(peakGain, now + 0.01);
+        voiceGain.gain.exponentialRampToValueAtTime(peakGain * 0.42, now + 0.22);
+        voiceGain.gain.exponentialRampToValueAtTime(0.0001, now + duration);
 
-          const oscOct = ctxAudio.createOscillator();
-          oscOct.type = "triangle";
-          oscOct.frequency.setValueAtTime(freq * 2, now);
+        filter.connect(voiceGain);
+        voiceGain.connect(bus);
 
-          const gainFund = ctxAudio.createGain();
-          const gainHarm = ctxAudio.createGain();
-          const gainOct = ctxAudio.createGain();
+        const voices: Array<{ type: OscillatorType; startFreq: number; endFreq?: number; detune?: number; gain: number }> = [
+          { type: 'triangle', startFreq: freq * 1.008, endFreq: freq, gain: 0.55 },
+          { type: 'sawtooth', startFreq: freq, detune: 3.5, gain: 0.32 },
+          { type: 'triangle', startFreq: freq * 2, gain: 0.22 },
+        ];
 
-          gainFund.gain.setValueAtTime(0.55, now);
-          gainHarm.gain.setValueAtTime(0.32, now);
-          gainOct.gain.setValueAtTime(0.22, now);
+        voices.forEach((v) => {
+          const osc = ctxAudio.createOscillator();
+          osc.type = v.type;
+          osc.frequency.setValueAtTime(v.startFreq, now);
+          if (v.endFreq) osc.frequency.exponentialRampToValueAtTime(v.endFreq, now + 0.045);
+          if (v.detune) osc.detune.setValueAtTime(v.detune, now);
 
-          const filter = ctxAudio.createBiquadFilter();
-          filter.type = "lowpass";
-          filter.Q.setValueAtTime(2.4, now);
-          const attackCutoff = Math.min(2800, Math.max(freq * 10, 620)) * (0.65 + 0.35 * vel);
-          filter.frequency.setValueAtTime(attackCutoff, now);
-          filter.frequency.exponentialRampToValueAtTime(freq * 3.2, now + 0.28);
-          filter.frequency.exponentialRampToValueAtTime(freq * 1.5, now + duration);
+          const gainNode = ctxAudio.createGain();
+          gainNode.gain.setValueAtTime(v.gain, now);
 
-          const voiceGain = ctxAudio.createGain();
-          const peakGain = 0.28 * vel;
-          voiceGain.gain.setValueAtTime(0.0001, now);
-          voiceGain.gain.linearRampToValueAtTime(peakGain, now + 0.01);
-          voiceGain.gain.exponentialRampToValueAtTime(peakGain * 0.42, now + 0.22);
-          voiceGain.gain.exponentialRampToValueAtTime(0.0001, now + duration);
+          osc.connect(gainNode);
+          gainNode.connect(filter);
+          osc.start(now);
+          osc.stop(now + duration + 0.05);
+        });
+      };
 
-          oscFund.connect(gainFund);
-          oscHarm.connect(gainHarm);
-          oscOct.connect(gainOct);
-
-          gainFund.connect(filter);
-          gainHarm.connect(filter);
-          gainOct.connect(filter);
-
-          filter.connect(voiceGain);
-          voiceGain.connect(masterBus);
-
-          oscFund.start(now);
-          oscHarm.start(now);
-          oscOct.start(now);
-
-          oscFund.stop(now + duration + 0.05);
-          oscHarm.stop(now + duration + 0.05);
-          oscOct.stop(now + duration + 0.05);
-        }
-
-        if (ctxAudio.state === "running") {
-          triggerVoice();
-        } else {
-          ctxAudio.resume().then(triggerVoice).catch(function () {});
-        }
-      } catch (_) {}
+      if (ctxAudio.state === 'running') {
+        triggerVoice();
+      } else {
+        ctxAudio.resume().then(triggerVoice).catch(() => {});
+      }
     }
 
-    ["pointerdown", "touchstart", "keydown"].forEach(function (evt) {
-      window.addEventListener(evt, ensureAudioContext, { passive: true });
+    ['pointerdown', 'touchstart', 'keydown'].forEach((evt) => {
+      window.addEventListener(evt, () => ensureAudioContext(), { passive: true });
     });
 
-    // 4 foreground bass strings (G2, D2, A1, E1)
-    const strings = [
-      { hz: 98.00, label: "98.00 Hz [G2]", yFrac: 0.24, gauge: 1.0, amp: 0, vel: 0, phase: 0 },
-      { hz: 73.42, label: "73.42 Hz [D2]", yFrac: 0.36, gauge: 1.35, amp: 0, vel: 0, phase: 1.2 },
-      { hz: 55.00, label: "55.00 Hz [A1]", yFrac: 0.48, gauge: 1.75, amp: 0, vel: 0, phase: 2.4 },
-      { hz: 41.20, label: "41.20 Hz [E1]", yFrac: 0.60, gauge: 2.25, amp: 0, vel: 0, phase: 3.6 }
+    interface BassString {
+      hz: number;
+      label: string;
+      yFrac: number;
+      gauge: number;
+      amp: number;
+      vel: number;
+      phase: number;
+    }
+
+    const strings: BassString[] = [
+      { hz: 98.0, label: '98.00 Hz [G2]', yFrac: 0.24, gauge: 1.0, amp: 0, vel: 0, phase: 0 },
+      { hz: 73.42, label: '73.42 Hz [D2]', yFrac: 0.36, gauge: 1.35, amp: 0, vel: 0, phase: 1.2 },
+      { hz: 55.0, label: '55.00 Hz [A1]', yFrac: 0.48, gauge: 1.75, amp: 0, vel: 0, phase: 2.4 },
+      { hz: 41.2, label: '41.20 Hz [E1]', yFrac: 0.6, gauge: 2.25, amp: 0, vel: 0, phase: 3.6 },
     ];
 
-    const NUM_LINES = 58;
-    const lines = [];
+    interface WaveLine {
+      progress: number;
+      c1: number;
+      c2: number;
+      c3: number;
+      w1: number;
+      w2: number;
+      w3: number;
+      a1: number;
+      a2: number;
+      a3: number;
+      f1: number;
+      f2: number;
+      ph: number;
+      boost: number;
+      isHighlight: boolean;
+    }
 
-    function initLineProps(obj, index) {
-      obj.c1 = -0.18 + (Math.random() - 0.5) * 0.24;
-      obj.c2 = 0.16 + (Math.random() - 0.5) * 0.24;
-      obj.c3 = (Math.random() - 0.5) * 0.22;
-      obj.w1 = 0.05 + Math.random() * 0.065;
-      obj.w2 = 0.045 + Math.random() * 0.06;
-      obj.w3 = 0.04 + Math.random() * 0.055;
-      obj.a1 = 0.25 + Math.random() * 0.65;
-      obj.a2 = 0.25 + Math.random() * 0.65;
-      obj.a3 = 0.20 + Math.random() * 0.55;
-      obj.f1 = 14 + Math.random() * 14;
-      obj.f2 = 24 + Math.random() * 18;
-      obj.ph = Math.random() * Math.PI * 2;
-      obj.boost = 0;
-      obj.isHighlight = (index % 19 === 0);
+    const NUM_LINES = 58;
+    const lines: WaveLine[] = [];
+
+    function createLineProps(progress: number, index: number): WaveLine {
+      return {
+        progress,
+        c1: -0.18 + (Math.random() - 0.5) * 0.24,
+        c2: 0.16 + (Math.random() - 0.5) * 0.24,
+        c3: (Math.random() - 0.5) * 0.22,
+        w1: 0.05 + Math.random() * 0.065,
+        w2: 0.045 + Math.random() * 0.06,
+        w3: 0.04 + Math.random() * 0.055,
+        a1: 0.25 + Math.random() * 0.65,
+        a2: 0.25 + Math.random() * 0.65,
+        a3: 0.2 + Math.random() * 0.55,
+        f1: 14 + Math.random() * 14,
+        f2: 24 + Math.random() * 18,
+        ph: Math.random() * Math.PI * 2,
+        boost: 0,
+        isHighlight: index % 19 === 0,
+      };
     }
 
     for (let i = 0; i < NUM_LINES; i++) {
-      const item = { progress: i / NUM_LINES };
-      initLineProps(item, i);
-      lines.push(item);
+      lines.push(createLineProps(i / NUM_LINES, i));
     }
 
     let spawnCounter = NUM_LINES;
-    let prevY = null;
+    let prevY: number | null = null;
     let pointerX = w * 0.5;
     let pointerY = h * 0.35;
     let resonanceEnergy = 0;
+    let freqTimer: ReturnType<typeof setTimeout> | undefined;
 
     function getOriginAndTopY() {
-      const canvasRect = canvas.getBoundingClientRect();
-      const rect = titleBlock ? titleBlock.getBoundingClientRect() : null;
-      const relTop = rect ? (rect.top - canvasRect.top) : h * 0.68;
-      const originY = Math.max(h * 0.52, relTop - 22);
-      const topLimitY = h * 0.05;
-      return { originY: originY, topLimitY: topLimitY };
+      const canvasRect = sceneCanvas.getBoundingClientRect();
+      const rect = titleBlock?.getBoundingClientRect();
+      const relTop = rect ? rect.top - canvasRect.top : h * 0.68;
+      return {
+        originY: Math.max(h * 0.52, relTop - 22),
+        topLimitY: h * 0.05,
+      };
     }
 
-    setTimeout(function () {
+    setTimeout(() => {
       strings[2].amp = 16;
       resonanceEnergy = 0.65;
     }, 800);
 
-    function pluckString(s, direction, speed) {
+    function pluckString(s: BassString, direction: number, speed = 20) {
       const bounds = getOriginAndTopY();
       const spanH = Math.max(100, bounds.originY - bounds.topLimitY);
       const sy = s.yFrac * h;
-      const clampedSpeed = Math.min(Math.max(speed || 20, 10), 38);
+      const clampedSpeed = Math.min(Math.max(speed, 10), 38);
 
       s.amp = (direction >= 0 ? 1 : -1) * Math.max(14, clampedSpeed * 1.25);
       resonanceEnergy = Math.min(1.6, resonanceEnergy + 0.55);
 
       const targetProg = Math.max(0, Math.min(1, (bounds.originY - sy) / spanH));
-      for (let k = 0; k < lines.length; k++) {
-        const dist = Math.abs(lines[k].progress - targetProg);
+      for (const line of lines) {
+        const dist = Math.abs(line.progress - targetProg);
         if (dist < 0.18) {
-          lines[k].boost = Math.min(1.6, lines[k].boost + (1 - dist / 0.18) * 0.85);
+          line.boost = Math.min(1.6, line.boost + (1 - dist / 0.18) * 0.85);
         }
       }
 
@@ -404,72 +421,95 @@ import { defaultLocale, locales, t } from '../i18n';
       playSubtleBassTone(s.hz, normVel);
 
       if (freqTelemetry) {
-        freqTelemetry.textContent = "RESONANCE // " + s.label;
-        freqTelemetry.classList.add("active");
-        clearTimeout(freqTelemetry._timer);
-        freqTelemetry._timer = setTimeout(function () {
-          freqTelemetry.classList.remove("active");
-          freqTelemetry.textContent = "41.20 Hz · 55.00 Hz · 73.42 Hz · 98.00 Hz";
+        freqTelemetry.textContent = `RESONANCE // ${s.label}`;
+        freqTelemetry.classList.add('active');
+        clearTimeout(freqTimer);
+        freqTimer = setTimeout(() => {
+          freqTelemetry.classList.remove('active');
+          freqTelemetry.textContent = defaultFreqText;
         }, 1600);
       }
     }
 
-    canvas.addEventListener("pointerdown", function (e) {
-      const rect = canvas.getBoundingClientRect();
-      pointerX = e.clientX - rect.left;
-      pointerY = e.clientY - rect.top;
-      prevY = pointerY;
+    sceneCanvas.addEventListener(
+      'pointerdown',
+      (e) => {
+        const rect = sceneCanvas.getBoundingClientRect();
+        pointerX = e.clientX - rect.left;
+        pointerY = e.clientY - rect.top;
+        prevY = pointerY;
 
-      let closest = null;
-      let minDist = Infinity;
-      strings.forEach(function (s) {
-        const sy = s.yFrac * h;
-        const d = Math.abs(pointerY - sy);
-        if (d < minDist) {
-          minDist = d;
-          closest = s;
-        }
-      });
-
-      if (closest && minDist < h * 0.14) {
-        const sy = closest.yFrac * h;
-        pluckString(closest, pointerY >= sy ? 1 : -1, 24);
-      }
-    }, { passive: true });
-
-    window.addEventListener("pointermove", function (e) {
-      const rect = canvas.getBoundingClientRect();
-      if (rect.bottom < 0 || rect.top > window.innerHeight) return;
-      pointerX = e.clientX - rect.left;
-      pointerY = e.clientY - rect.top;
-      if (pointerY < 0 || pointerY > h) {
-        prevY = null;
-        return;
-      }
-
-      if (prevY !== null) {
-        strings.forEach(function (s) {
-          const sy = s.yFrac * h;
-          if ((prevY < sy && pointerY >= sy) || (prevY > sy && pointerY <= sy)) {
-            const speed = Math.min(Math.abs(pointerY - prevY), 38);
-            pluckString(s, pointerY > prevY ? 1 : -1, speed);
+        let closest: BassString | null = null;
+        let minDist = Infinity;
+        for (const s of strings) {
+          const d = Math.abs(pointerY - s.yFrac * h);
+          if (d < minDist) {
+            minDist = d;
+            closest = s;
           }
-        });
-      }
-      prevY = pointerY;
+        }
 
-      if (layerTelemetry) {
-        const zVal = (Math.max(0, Math.min(1, 1 - pointerY / h)) * 48.0).toFixed(2);
-        layerTelemetry.textContent = "Z: " + zVal + "mm // 215°C";
-      }
-    }, { passive: true });
+        if (closest && minDist < h * 0.14) {
+          pluckString(closest, pointerY >= closest.yFrac * h ? 1 : -1, 24);
+        }
+      },
+      { passive: true }
+    );
+
+    window.addEventListener(
+      'pointermove',
+      (e) => {
+        const rect = sceneCanvas.getBoundingClientRect();
+        if (rect.bottom < 0 || rect.top > window.innerHeight) return;
+        pointerX = e.clientX - rect.left;
+        pointerY = e.clientY - rect.top;
+        if (pointerY < 0 || pointerY > h) {
+          prevY = null;
+          return;
+        }
+
+        if (prevY !== null) {
+          for (const s of strings) {
+            const sy = s.yFrac * h;
+            if ((prevY < sy && pointerY >= sy) || (prevY > sy && pointerY <= sy)) {
+              pluckString(s, pointerY > prevY ? 1 : -1, Math.min(Math.abs(pointerY - prevY), 38));
+            }
+          }
+        }
+        prevY = pointerY;
+
+        if (layerTelemetry) {
+          const zVal = (Math.max(0, Math.min(1, 1 - pointerY / h)) * 48.0).toFixed(2);
+          layerTelemetry.textContent = `Z: ${zVal}mm // 215°C`;
+        }
+      },
+      { passive: true }
+    );
 
     let t = 0;
 
+    function tracePoints(points: Array<{ x: number; y: number }>) {
+      sceneCtx.beginPath();
+      sceneCtx.moveTo(points[0].x, points[0].y);
+      for (let j = 1; j < points.length; j++) {
+        sceneCtx.lineTo(points[j].x, points[j].y);
+      }
+    }
+
+    function traceStringWave(s: BassString, sy: number) {
+      const segments = 72;
+      sceneCtx.beginPath();
+      sceneCtx.moveTo(0, sy);
+      for (let i = 1; i <= segments; i++) {
+        const u = i / segments;
+        const env = Math.sin(u * Math.PI);
+        const overtone = Math.sin(u * Math.PI * 3 + s.phase) * 0.16;
+        sceneCtx.lineTo(u * w, sy + (env + overtone * env) * s.amp);
+      }
+    }
+
     function drawBottomEmergingWaves() {
-      const bounds = getOriginAndTopY();
-      const originY = bounds.originY;
-      const topLimitY = bounds.topLimitY;
+      const { originY, topLimitY } = getOriginAndTopY();
       const totalSpanY = Math.max(120, originY - topLimitY);
       const maxPeakHeight = Math.min(h * 0.115, 96);
 
@@ -479,38 +519,27 @@ import { defaultLocale, locales, t } from '../i18n';
         lines[i].progress += 0.00085;
         lines[i].boost *= 0.96;
         if (lines[i].progress >= 1.0) {
-          lines[i].progress -= 1.0;
           spawnCounter++;
-          initLineProps(lines[i], spawnCounter);
+          lines[i] = createLineProps(lines[i].progress - 1.0, spawnCounter);
         }
       }
 
-      const sorted = lines.slice().sort(function (a, b) {
-        return b.progress - a.progress;
-      });
-
+      const sorted = [...lines].sort((a, b) => b.progress - a.progress);
       const numSamples = 110;
       const relCursorX = (pointerX / w) * 2 - 1;
 
-      for (let i = 0; i < sorted.length; i++) {
-        const row = sorted[i];
+      for (const row of sorted) {
         const p = row.progress;
-
         const baseY = originY - Math.pow(p, 0.94) * totalSpanY;
         const spanWidth = Math.min(w * 0.88, 860) * (1.0 - 0.28 * p);
         const startX = (w - spanWidth) * 0.5;
+        const rowEnv = Math.min(1, p * 6.5) * Math.pow(Math.max(0, 1 - p), 1.35);
 
-        const birthEnv = Math.min(1, p * 6.5);
-        const deathEnv = Math.pow(Math.max(0, 1 - p), 1.35);
-        const rowEnv = birthEnv * deathEnv;
-
-        const points = [];
+        const points: Array<{ x: number; y: number }> = [];
 
         for (let j = 0; j <= numSamples; j++) {
           const uNorm = j / numSamples;
           const u = uNorm * 2 - 1;
-          const px = startX + uNorm * spanWidth;
-
           const edgeFeather = Math.pow(Math.max(0, 1 - u * u), 1.8);
           const centerEnvelope = Math.exp(-Math.pow(u / 0.46, 4));
           const g1 = row.a1 * Math.exp(-Math.pow((u - row.c1) / row.w1, 2));
@@ -518,14 +547,8 @@ import { defaultLocale, locales, t } from '../i18n';
           const g3 = row.a3 * Math.exp(-Math.pow((u - row.c3) / row.w3, 2));
 
           const phase = t * 0.024 + row.ph;
-          const jagged =
-            0.54 +
-            0.28 * Math.sin(u * row.f1 + phase) +
-            0.20 * Math.cos(u * row.f2 - phase * 1.25);
-
-          const distCursor = Math.abs(u - relCursorX);
-          const cursorWave = Math.exp(-Math.pow(distCursor / 0.22, 2)) * 0.18;
-
+          const jagged = 0.54 + 0.28 * Math.sin(u * row.f1 + phase) + 0.2 * Math.cos(u * row.f2 - phase * 1.25);
+          const cursorWave = Math.exp(-Math.pow(Math.abs(u - relCursorX) / 0.22, 2)) * 0.18;
           const boostSignal = (row.boost * 0.5 + resonanceEnergy * 0.35) * (0.65 + 0.35 * Math.sin(u * 16 - t * 0.15));
 
           const ridgeHeight =
@@ -536,123 +559,85 @@ import { defaultLocale, locales, t } from '../i18n';
             rowEnv *
             edgeFeather;
 
-          const py = baseY - ridgeHeight;
-          points.push({ x: px, y: py });
+          points.push({ x: startX + uNorm * spanWidth, y: baseY - ridgeHeight });
         }
 
         const curtainBottomY = Math.min(originY, baseY + 12);
-        ctx.beginPath();
-        ctx.moveTo(points[0].x, points[0].y);
-        for (let j = 1; j < points.length; j++) {
-          ctx.lineTo(points[j].x, points[j].y);
-        }
-        ctx.lineTo(points[points.length - 1].x, curtainBottomY);
-        ctx.lineTo(points[0].x, curtainBottomY);
-        ctx.closePath();
-        ctx.fillStyle = "rgba(4, 4, 6, " + (0.92 * rowEnv) + ")";
-        ctx.fill();
+        tracePoints(points);
+        sceneCtx.lineTo(points[points.length - 1].x, curtainBottomY);
+        sceneCtx.lineTo(points[0].x, curtainBottomY);
+        sceneCtx.closePath();
+        sceneCtx.fillStyle = `rgba(4, 4, 6, ${0.92 * rowEnv})`;
+        sceneCtx.fill();
 
-        const grad = ctx.createLinearGradient(startX, baseY, startX + spanWidth, baseY);
+        const grad = sceneCtx.createLinearGradient(startX, baseY, startX + spanWidth, baseY);
         const alpha = Math.min(0.88, (0.16 + 0.54 * rowEnv + row.boost * 0.28) * rowEnv);
 
         if (row.isHighlight) {
-          grad.addColorStop(0.0, "rgba(223, 155, 82, 0)");
-          grad.addColorStop(0.18, "rgba(223, 155, 82, " + (alpha * 0.45) + ")");
-          grad.addColorStop(0.5, "rgba(223, 155, 82, " + Math.min(0.92, alpha * 1.35) + ")");
-          grad.addColorStop(0.82, "rgba(223, 155, 82, " + (alpha * 0.45) + ")");
-          grad.addColorStop(1.0, "rgba(223, 155, 82, 0)");
-          ctx.lineWidth = 1.25;
+          grad.addColorStop(0.0, 'rgba(223, 155, 82, 0)');
+          grad.addColorStop(0.18, `rgba(223, 155, 82, ${alpha * 0.45})`);
+          grad.addColorStop(0.5, `rgba(223, 155, 82, ${Math.min(0.92, alpha * 1.35)})`);
+          grad.addColorStop(0.82, `rgba(223, 155, 82, ${alpha * 0.45})`);
+          grad.addColorStop(1.0, 'rgba(223, 155, 82, 0)');
+          sceneCtx.lineWidth = 1.25;
         } else {
           const warm = Math.min(1, row.boost * 0.65);
-          const r = Math.round(205 + warm * 35);
-          const g = Math.round(220 - warm * 35);
-          const b = Math.round(226 - warm * 95);
-          const rgb = r + ", " + g + ", " + b;
-
-          grad.addColorStop(0.0, "rgba(" + rgb + ", 0)");
-          grad.addColorStop(0.16, "rgba(" + rgb + ", " + (alpha * 0.35) + ")");
-          grad.addColorStop(0.5, "rgba(" + rgb + ", " + alpha + ")");
-          grad.addColorStop(0.84, "rgba(" + rgb + ", " + (alpha * 0.35) + ")");
-          grad.addColorStop(1.0, "rgba(" + rgb + ", " + 0 + ")");
-          ctx.lineWidth = 0.9 + warm * 0.35;
+          const rgb = `${Math.round(205 + warm * 35)}, ${Math.round(220 - warm * 35)}, ${Math.round(226 - warm * 95)}`;
+          grad.addColorStop(0.0, `rgba(${rgb}, 0)`);
+          grad.addColorStop(0.16, `rgba(${rgb}, ${alpha * 0.35})`);
+          grad.addColorStop(0.5, `rgba(${rgb}, ${alpha})`);
+          grad.addColorStop(0.84, `rgba(${rgb}, ${alpha * 0.35})`);
+          grad.addColorStop(1.0, `rgba(${rgb}, 0)`);
+          sceneCtx.lineWidth = 0.9 + warm * 0.35;
         }
 
-        ctx.beginPath();
-        ctx.moveTo(points[0].x, points[0].y);
-        for (let j = 1; j < points.length; j++) {
-          ctx.lineTo(points[j].x, points[j].y);
-        }
-        ctx.strokeStyle = grad;
-        ctx.stroke();
+        tracePoints(points);
+        sceneCtx.strokeStyle = grad;
+        sceneCtx.stroke();
       }
     }
 
     function drawForegroundStrings() {
-      strings.forEach(function (s) {
+      for (const s of strings) {
         const sy = s.yFrac * h;
-
-        const force = -0.22 * s.amp;
-        s.vel = (s.vel + force) * 0.92;
+        s.vel = (s.vel - 0.22 * s.amp) * 0.92;
         s.amp += s.vel;
         s.phase += 0.38;
 
         const energy = Math.min(Math.abs(s.amp) / 20, 1);
 
-        ctx.beginPath();
-        ctx.moveTo(0, sy);
-        const segments = 72;
-        for (let i = 1; i <= segments; i++) {
-          const u = i / segments;
-          const x = u * w;
-          const env = Math.sin(u * Math.PI);
-          const overtone = Math.sin(u * Math.PI * 3 + s.phase) * 0.16;
-          const dy = (env + overtone * env) * s.amp;
-          ctx.lineTo(x, sy + dy);
-        }
-        ctx.strokeStyle = "rgba(4, 4, 6, 0.78)";
-        ctx.lineWidth = s.gauge + 4;
-        ctx.stroke();
+        traceStringWave(s, sy);
+        sceneCtx.strokeStyle = 'rgba(4, 4, 6, 0.78)';
+        sceneCtx.lineWidth = s.gauge + 4;
+        sceneCtx.stroke();
 
-        ctx.beginPath();
-        ctx.moveTo(0, sy);
-        for (let i = 1; i <= segments; i++) {
-          const u = i / segments;
-          const x = u * w;
-          const env = Math.sin(u * Math.PI);
-          const overtone = Math.sin(u * Math.PI * 3 + s.phase) * 0.16;
-          const dy = (env + overtone * env) * s.amp;
-          ctx.lineTo(x, sy + dy);
-        }
-
+        traceStringWave(s, sy);
         if (energy > 0.02) {
-          ctx.shadowColor = "rgba(223, 155, 82, 0.9)";
-          ctx.shadowBlur = 18 * energy + 4;
-          ctx.strokeStyle = "rgba(235, 175, 105, " + (0.55 + energy * 0.45) + ")";
+          sceneCtx.shadowColor = 'rgba(223, 155, 82, 0.9)';
+          sceneCtx.shadowBlur = 18 * energy + 4;
+          sceneCtx.strokeStyle = `rgba(235, 175, 105, ${0.55 + energy * 0.45})`;
         } else {
-          ctx.shadowColor = "rgba(240, 237, 230, 0.25)";
-          ctx.shadowBlur = 4;
-          ctx.strokeStyle = "rgba(240, 237, 230, 0.36)";
+          sceneCtx.shadowColor = 'rgba(240, 237, 230, 0.25)';
+          sceneCtx.shadowBlur = 4;
+          sceneCtx.strokeStyle = 'rgba(240, 237, 230, 0.36)';
         }
 
-        ctx.lineWidth = s.gauge;
-        ctx.stroke();
-        ctx.shadowBlur = 0;
-      });
+        sceneCtx.lineWidth = s.gauge;
+        sceneCtx.stroke();
+        sceneCtx.shadowBlur = 0;
+      }
     }
+
+    const states = ['<state:materializing />', '<layer:slicing />', '<signal:resonant />'];
 
     function tick() {
       t += 1;
-      ctx.clearRect(0, 0, w, h);
+      sceneCtx.clearRect(0, 0, w, h);
 
       drawBottomEmergingWaves();
       drawForegroundStrings();
 
       if (t % 240 === 0 && stateReadout) {
-        const states = [
-          "<state:materializing />",
-          "<layer:slicing />",
-          "<signal:resonant />"
-        ];
         stateReadout.textContent = states[Math.floor(t / 240) % states.length];
       }
 
@@ -660,5 +645,5 @@ import { defaultLocale, locales, t } from '../i18n';
     }
 
     tick();
-  })();
+  }
 </script>

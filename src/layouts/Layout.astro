@@ -1,6 +1,6 @@
 ---
 import '../styles/global.css';
-import { defaultLocale, locales, translations } from '../i18n';
+import { defaultLocale } from '../i18n';
 
 interface Props {
   title?: string;
@@ -34,95 +34,43 @@ const {
     <div class="grain" aria-hidden="true"></div>
     <slot />
 
-    <script
-      is:inline
-      define:vars={{
-        i18nLocales: locales,
-        i18nDefault: defaultLocale,
-        i18nDict: translations,
-      }}
-    >
-      (function () {
-        function isSupported(lang) {
-          return typeof lang === 'string' && i18nLocales.indexOf(lang) !== -1;
+    <script>
+      import { defaultLocale, isLocale, t, type Locale } from '../i18n';
+
+      const STORAGE_KEY = 'nasuta-lang';
+
+      function applyLocale(lang: Locale, persist: boolean) {
+        document.documentElement.lang = lang;
+
+        if (persist) {
+          try {
+            localStorage.setItem(STORAGE_KEY, lang);
+          } catch {}
         }
 
-        function applyLocale(lang, persist) {
-          const active = isSupported(lang) ? lang : i18nDefault;
-          document.documentElement.lang = active;
-
-          if (persist) {
-            try {
-              localStorage.setItem('nasuta-lang', active);
-            } catch (_) {}
-          }
-
-          const dict = i18nDict[active] || i18nDict[i18nDefault] || {};
-
-          function getByPath(obj, path) {
-            return String(path)
-              .split('.')
-              .reduce(function (acc, part) {
-                return acc && typeof acc === 'object' ? acc[part] : undefined;
-              }, obj);
-          }
-
-          document.querySelectorAll('[data-i18n-key]').forEach(function (el) {
-            const key = el.getAttribute('data-i18n-key');
-            if (!key) return;
-            const val = getByPath(dict, key) ?? getByPath(i18nDict[i18nDefault], key);
-            if (typeof val === 'string') {
-              el.textContent = val;
-            }
-          });
-
-          document.querySelectorAll('[data-set-lang]').forEach(function (btn) {
-            const isCurrent = btn.getAttribute('data-set-lang') === active;
-            btn.setAttribute('aria-pressed', isCurrent ? 'true' : 'false');
-          });
-        }
-
-        let initial = i18nDefault;
-        try {
-          const saved = localStorage.getItem('nasuta-lang');
-          if (isSupported(saved)) initial = saved;
-        } catch (_) {}
-
-        applyLocale(initial, false);
-
-        document.addEventListener('click', function (e) {
-          const btn = e.target.closest('[data-set-lang]');
-          if (!btn) return;
-          const next = btn.getAttribute('data-set-lang');
-          if (isSupported(next)) {
-            applyLocale(next, true);
-          }
+        document.querySelectorAll<HTMLElement>('[data-i18n-key]').forEach((el) => {
+          const key = el.dataset.i18nKey;
+          if (key) el.textContent = t(key, lang);
         });
-      })();
+
+        document.querySelectorAll<HTMLElement>('[data-set-lang]').forEach((btn) => {
+          btn.setAttribute('aria-pressed', String(btn.dataset.setLang === lang));
+        });
+      }
+
+      let initial: Locale = defaultLocale;
+      try {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        if (isLocale(saved)) initial = saved;
+      } catch {}
+
+      applyLocale(initial, false);
+
+      document.addEventListener('click', (e) => {
+        const btn = (e.target as Element | null)?.closest<HTMLElement>('[data-set-lang]');
+        const next = btn?.dataset.setLang;
+        if (isLocale(next)) applyLocale(next, true);
+      });
     </script>
   </body>
 </html>
-
-<style is:global>
-  .grain {
-    position: fixed;
-    inset: -50%;
-    width: 200%;
-    height: 200%;
-    z-index: 50;
-    pointer-events: none;
-    opacity: 0.032;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-  }
-
-  .heading-gradient {
-    background: linear-gradient(90deg, rgba(240, 237, 230, 0.85) 0%, #ffffff 50%, rgba(223, 155, 82, 0.88) 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-  }
-
-  [data-set-lang][aria-pressed="true"] {
-    color: var(--amber);
-    font-weight: 400;
-  }
-</style>

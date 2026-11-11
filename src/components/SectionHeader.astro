@@ -1,0 +1,25 @@
+---
+import { t, type TranslationKey } from '../i18n';
+
+interface Props {
+  tagKey: TranslationKey;
+  titleKey: TranslationKey;
+  statusTag: string;
+}
+
+const { tagKey, titleKey, statusTag } = Astro.props;
+---
+
+<div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pb-6 border-b border-white/[0.08]">
+  <div>
+    <p data-i18n-key={tagKey} class="font-mono text-[0.62rem] tracking-[0.42em] uppercase text-amber mb-2">
+      {t(tagKey)}
+    </p>
+    <h2 data-i18n-key={titleKey} class="text-xl sm:text-2xl font-extralight tracking-[0.24em] uppercase heading-gradient">
+      {t(titleKey)}
+    </h2>
+  </div>
+  <span class="font-mono text-[0.62rem] tracking-[0.22em] uppercase text-ink/40">
+    {statusTag}
+  </span>
+</div>

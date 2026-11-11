@@ -18,6 +18,29 @@ export interface Track {
   nodes: RoadmapNode[];
 }
 
+export interface ContactLink {
+  label: string;
+  href: string;
+  external?: boolean;
+}
+
+export const contactLinks: ContactLink[] = [
+  {
+    label: 'GitHub ↗',
+    href: 'https://github.com/sebastian-nasuta',
+    external: true,
+  },
+  {
+    label: 'MakerWorld (@chy.ba.tys) ↗',
+    href: 'https://makerworld.com/@chy.ba.tys',
+    external: true,
+  },
+  {
+    label: 'kontakt@nasuta.pl',
+    href: 'mailto:kontakt@nasuta.pl',
+  },
+];
+
 export const tracks: Track[] = [
   {
     id: '3d',
