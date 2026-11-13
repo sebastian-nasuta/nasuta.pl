@@ -52,7 +52,7 @@ const DEFAULT_FREQ_READOUT = '41.20 Hz · 55.00 Hz · 73.42 Hz · 98.00 Hz';
       </span>
       <a
         href="#projects"
-        class="pointer-events-auto hidden sm:inline-flex items-center gap-2 text-ink/40 hover:text-amber transition-colors tracking-[0.3em] text-[0.6rem] absolute left-1/2 -translate-x-1/2"
+        class="pointer-events-auto inline-flex items-center gap-2 text-ink/40 hover:text-amber transition-colors tracking-[0.3em] text-[0.6rem] max-sm:order-3 max-sm:mt-1.5 sm:absolute sm:left-1/2 sm:-translate-x-1/2"
       >
         <span data-i18n-key="hero.scroll">{t('hero.scroll')}</span>
         <span class="text-amber">↓</span>
@@ -189,6 +189,9 @@ const DEFAULT_FREQ_READOUT = '41.20 Hz · 55.00 Hz · 73.42 Hz · 98.00 Hz';
   }
 
   @media (max-width: 640px) {
+    .title-block {
+      bottom: clamp(5.25rem, 11svh, 6.25rem);
+    }
     .hero-heading {
       font-size: 1.1rem;
       letter-spacing: 0.18em;
