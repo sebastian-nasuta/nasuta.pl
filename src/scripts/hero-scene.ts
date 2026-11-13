@@ -24,6 +24,9 @@ if (canvas && ctx) {
   }
 
   window.addEventListener('resize', resize);
+  if (typeof ResizeObserver !== 'undefined') {
+    new ResizeObserver(resize).observe(sceneCanvas);
+  }
   resize();
 
   // Web Audio bass string synthesis
