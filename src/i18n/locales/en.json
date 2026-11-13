@@ -1,11 +1,6 @@
 {
-  "nav": {
-    "projects": "// Projects",
-    "contact": "// Contact"
-  },
   "hero": {
     "scroll": "Scroll",
-    "heading": "Something is taking shape",
     "backToTop": "↑ Top"
   },
   "sections": {

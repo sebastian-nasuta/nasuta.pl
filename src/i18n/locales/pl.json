@@ -1,11 +1,6 @@
 {
-  "nav": {
-    "projects": "// Projekty",
-    "contact": "// Kontakt"
-  },
   "hero": {
     "scroll": "Przewiń",
-    "heading": "Coś nabiera kształtu",
     "backToTop": "↑ Góra"
   },
   "sections": {
