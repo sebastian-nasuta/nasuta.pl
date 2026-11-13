@@ -75,35 +75,7 @@ const contactEntries = await getCollection('contacts');
   </footer>
 
   <script>
-    // Scroll-reveal for project cards on touch/mobile screens
-    if ('IntersectionObserver' in window) {
-      const cards = document.querySelectorAll('.project-article');
-      const observer = new IntersectionObserver(
-        (entries) => {
-          entries.forEach((entry) => {
-            // Check if user is on a touch device without hover
-            const isTouch = window.matchMedia('(hover: none)').matches || window.innerWidth < 768;
-            if (isTouch) {
-              entry.target.classList.toggle('is-visible', entry.isIntersecting);
-            } else {
-              entry.target.classList.remove('is-visible');
-            }
-          });
-        },
-        {
-          rootMargin: '-20% 0px -25% 0px',
-          threshold: 0.15,
-        }
-      );
-
-      cards.forEach((card) => observer.observe(card));
-
-      window.addEventListener('resize', () => {
-        const isDesktop = window.matchMedia('(hover: hover)').matches && window.innerWidth >= 768;
-        if (isDesktop) {
-          cards.forEach((card) => card.classList.remove('is-visible'));
-        }
-      });
-    }
+    import { initMobileProjectReveal } from '../scripts/mobile-reveal';
+    initMobileProjectReveal();
   </script>
 </Layout>
