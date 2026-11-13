@@ -22,7 +22,7 @@ const linkProps = node.link
   : {};
 ---
 
-<article class="relative pl-8 sm:pl-10 group">
+<article class="relative pl-8 sm:pl-10 group project-article">
   {isFirst && (
     <span
       aria-hidden="true"
@@ -39,11 +39,11 @@ const linkProps = node.link
 
   <span
     aria-hidden="true"
-    class="absolute left-0 top-6 -translate-y-1/2 z-10 w-[15px] h-[15px] rounded-full border-[3px] border-bg bg-amber shadow-[0_0_10px_rgba(223,155,82,0.65)] transition-transform group-hover:scale-125"
+    class="timeline-dot absolute left-0 top-6 -translate-y-1/2 z-10 w-[15px] h-[15px] rounded-full border-[3px] border-bg bg-amber shadow-[0_0_10px_rgba(223,155,82,0.65)] transition-transform group-hover:scale-125"
   ></span>
   <span
     aria-hidden="true"
-    class="absolute left-[15px] top-6 -translate-y-1/2 w-[17px] sm:w-[25px] h-px bg-white/15 group-hover:bg-amber/50 transition-colors"
+    class="timeline-arm absolute left-[15px] top-6 -translate-y-1/2 w-[17px] sm:w-[25px] h-px bg-white/15 group-hover:bg-amber/50 transition-colors"
   ></span>
 
   <CardTag
@@ -52,7 +52,7 @@ const linkProps = node.link
   >
     <span
       aria-hidden="true"
-      class="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-amber/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+      class="project-top-line pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-amber/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"
     ></span>
 
     <div class="relative z-10 flex flex-col sm:flex-row gap-5 sm:gap-6">
@@ -77,12 +77,12 @@ const linkProps = node.link
         <div class="flex items-baseline justify-between gap-4">
           <h3
             data-i18n-key={node.titleKey}
-            class="text-base sm:text-lg font-light tracking-[0.14em] uppercase text-ink group-hover:text-amber transition-colors"
+            class="project-title text-base sm:text-lg font-light tracking-[0.14em] uppercase text-ink group-hover:text-amber transition-colors"
           >
             {t(node.titleKey)}
           </h3>
           {node.link && (
-            <span class="font-mono text-xs text-ink/35 group-hover:text-amber transition-colors shrink-0">
+            <span class="project-arrow font-mono text-xs text-ink/35 group-hover:text-amber transition-colors shrink-0">
               ↗
             </span>
           )}
@@ -112,17 +112,36 @@ const linkProps = node.link
     background: linear-gradient(135deg, rgba(255, 255, 255, 0.012) 0%, rgba(4, 4, 6, 0.85) 100%);
   }
 
-  .group:hover .project-card {
+  .group:hover .project-card,
+  .group.is-visible .project-card {
     border-color: rgba(223, 155, 82, 0.42);
     background: radial-gradient(circle at 18% 50%, rgba(223, 155, 82, 0.07) 0%, rgba(4, 4, 6, 0.9) 70%);
     box-shadow: 0 10px 36px -12px rgba(0, 0, 0, 0.85), 0 0 28px -10px rgba(223, 155, 82, 0.16);
+  }
+
+  .group.is-visible .timeline-dot {
+    transform: translateY(-50%) scale(1.25);
+  }
+
+  .group.is-visible .timeline-arm {
+    background-color: rgba(223, 155, 82, 0.5);
+  }
+
+  .group.is-visible .project-top-line {
+    opacity: 1;
+  }
+
+  .group.is-visible .project-title,
+  .group.is-visible .project-arrow {
+    color: var(--amber);
   }
 
   .project-thumb {
     transition: border-color 0.6s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.6s cubic-bezier(0.16, 1, 0.3, 1);
   }
 
-  .group:hover .project-thumb {
+  .group:hover .project-thumb,
+  .group.is-visible .project-thumb {
     border-color: rgba(223, 155, 82, 0.45);
     box-shadow: 0 0 22px -6px rgba(223, 155, 82, 0.22);
   }
@@ -137,7 +156,8 @@ const linkProps = node.link
       transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
   }
 
-  .group:hover .project-thumb-img {
+  .group:hover .project-thumb-img,
+  .group.is-visible .project-thumb-img {
     filter: grayscale(8%) contrast(1.02) brightness(0.9) sepia(0%);
     opacity: 0.96;
     transform: scale(1.04);
@@ -151,7 +171,8 @@ const linkProps = node.link
     transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1);
   }
 
-  .group:hover .project-thumb-shroud {
+  .group:hover .project-thumb-shroud,
+  .group.is-visible .project-thumb-shroud {
     opacity: 0.24;
   }
 
@@ -168,7 +189,8 @@ const linkProps = node.link
     transition: transform 1.05s cubic-bezier(0.16, 1, 0.3, 1);
   }
 
-  .group:hover .project-thumb-sheen {
+  .group:hover .project-thumb-sheen,
+  .group.is-visible .project-thumb-sheen {
     transform: translateX(125%);
   }
 </style>
