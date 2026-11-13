@@ -59,18 +59,16 @@ const contactEntries = await getCollection('contacts');
   </main>
 
   <footer class="border-t border-white/[0.07] py-8 px-6 sm:px-10">
-    <div class="relative max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 font-mono text-[0.62rem] tracking-[0.24em] uppercase text-ink/40">
-      <a href="#top" class="inline-flex items-center gap-2.5 text-ink/80 hover:text-amber transition-colors">
+    <div class="max-w-5xl mx-auto flex flex-col sm:grid sm:grid-cols-[1fr_auto_1fr] items-center gap-4 sm:gap-6 font-mono text-[0.62rem] tracking-[0.24em] uppercase text-ink/40">
+      <a href="#top" class="sm:justify-self-end inline-flex items-center gap-2.5 text-ink/80 hover:text-amber transition-colors">
         <Logo class="w-5 h-5 shrink-0" />
         <span class="tracking-[0.34em]">nasuta.pl</span>
       </a>
-      <span class="sm:absolute sm:left-1/2 sm:-translate-x-1/2 inline-flex items-center gap-2">
+      <span class="hidden sm:block w-px h-3.5 bg-white/[0.14]" aria-hidden="true"></span>
+      <span class="sm:justify-self-start inline-flex items-center gap-2">
         <span class="font-sans text-[0.76rem] leading-none text-amber/75 -translate-y-[1.5px]">©</span>
         <span>{new Date().getFullYear()} Sebastian Nasuta</span>
       </span>
-      <a href="#top" data-i18n-key="hero.backToTop" class="hover:text-amber transition-colors">
-        {t('hero.backToTop')}
-      </a>
     </div>
   </footer>
 
