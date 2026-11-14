@@ -1,7 +1,6 @@
 {
   "hero": {
-    "scroll": "Scroll",
-    "backToTop": "↑ Top"
+    "scroll": "Scroll"
   },
   "sections": {
     "projects": {

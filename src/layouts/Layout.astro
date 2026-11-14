@@ -14,6 +14,7 @@ const {
 } = Astro.props;
 
 const gaId = import.meta.env.PUBLIC_GA_ID || 'G-JBWJYGPPJR';
+const canonicalURL = Astro.site ? new URL(Astro.url.pathname, Astro.site) : Astro.url;
 ---
 
 <!doctype html>
@@ -23,6 +24,11 @@ const gaId = import.meta.env.PUBLIC_GA_ID || 'G-JBWJYGPPJR';
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{title}</title>
     <meta name="description" content={description} />
+    <link rel="canonical" href={canonicalURL} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonicalURL} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
     <meta name="theme-color" content="#040406" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -82,7 +88,14 @@ const gaId = import.meta.env.PUBLIC_GA_ID || 'G-JBWJYGPPJR';
 
         document.querySelectorAll<HTMLElement>('[data-i18n-key]').forEach((el) => {
           const key = el.dataset.i18nKey;
-          if (key) el.textContent = t(key, lang);
+          if (!key) return;
+          const value = t(key, lang);
+          const attrs = el.dataset.i18nAttrs;
+          if (attrs) {
+            attrs.split(',').forEach((attr) => el.setAttribute(attr.trim(), value));
+          } else {
+            el.textContent = value;
+          }
         });
 
         document.querySelectorAll<HTMLElement>('[data-lang-indicator]').forEach((el) => {

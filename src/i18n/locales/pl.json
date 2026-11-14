@@ -1,7 +1,6 @@
 {
   "hero": {
-    "scroll": "Przewiń",
-    "backToTop": "↑ Góra"
+    "scroll": "Przewiń"
   },
   "sections": {
     "projects": {
