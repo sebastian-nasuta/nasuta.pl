@@ -26,5 +26,10 @@
       "title": "HPH — Hiking Poles Holder",
       "desc": "System do mocowania kijków trekkingowych do plecaka składający się z uchwytu z motywem górskim (warstwa 0.12 mm) i elastycznego paska (warstwa 0.20 mm). Całość drukowana z wytrzymałego TPU, wygodna w obsłudze nawet w rękawiczkach."
     }
+  },
+  "consent": {
+    "text": "Ta strona wykorzystuje pliki cookie Google Analytics w celu zbierania anonimowych statystyk odwiedzin i ulepszania jej działania. Możesz zaakceptować lub odrzucić cookies analityczne — wybór nie wpływa na działanie strony.",
+    "accept": "Akceptuj",
+    "decline": "Odrzuć"
   }
 }

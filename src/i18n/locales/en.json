@@ -26,5 +26,10 @@
       "title": "HPH — Hiking Poles Holder",
       "desc": "A backpack attachment system for trekking poles consisting of a durable holder with a mountain motif (0.12 mm layer height) and a flexible strap (0.20 mm layer height). Printed in weather-resistant TPU and glove-friendly."
     }
+  },
+  "consent": {
+    "text": "This site uses Google Analytics cookies to collect anonymous traffic statistics and improve how it works. You can accept or decline analytical cookies — your choice will not affect site functionality.",
+    "accept": "Accept",
+    "decline": "Decline"
   }
 }

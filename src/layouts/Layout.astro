@@ -1,5 +1,6 @@
 ---
 import '../styles/global.css';
+import CookieConsent from '../components/CookieConsent.astro';
 import { defaultLocale } from '../i18n';
 
 interface Props {
@@ -11,6 +12,8 @@ const {
   title = 'nasuta.pl',
   description = 'Line by line · Layer by layer · Note by note',
 } = Astro.props;
+
+const gaId = import.meta.env.PUBLIC_GA_ID || 'G-JBWJYGPPJR';
 ---
 
 <!doctype html>
@@ -28,10 +31,38 @@ const {
       href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400&family=Outfit:wght@200;300;400&display=swap"
       rel="stylesheet"
     />
+    {
+      gaId && import.meta.env.PROD && (
+        <>
+          <script is:inline>
+            window.dataLayer = window.dataLayer || [];
+            function gtag() {
+              window.dataLayer.push(arguments);
+            }
+            var savedConsent = null;
+            try {
+              savedConsent = localStorage.getItem('nasuta-consent');
+            } catch {}
+            gtag('consent', 'default', {
+              analytics_storage: savedConsent === 'granted' ? 'granted' : 'denied',
+              ad_storage: 'denied',
+              ad_user_data: 'denied',
+              ad_personalization: 'denied',
+            });
+            gtag('js', new Date());
+          </script>
+          <script is:inline async src={`https://www.googletagmanager.com/gtag/js?id=${gaId}`} />
+          <script is:inline define:vars={{ gaId }}>
+            gtag('config', gaId);
+          </script>
+        </>
+      )
+    }
   </head>
   <body class="bg-bg text-ink min-h-screen overflow-x-hidden selection:bg-amber/25 selection:text-ink">
     <div class="grain" aria-hidden="true"></div>
     <slot />
+    <CookieConsent />
 
     <script>
       import { defaultLocale, isLocale, locales, t, type Locale } from '../i18n';
