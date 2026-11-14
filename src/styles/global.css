@@ -10,12 +10,12 @@
 }
 
 :root {
-  --bg: #040406;
-  --ink: #f0ede6;
+  --bg: var(--color-bg);
+  --ink: var(--color-ink);
   --ink-dim: rgba(240, 237, 230, 0.55);
   --ink-whisper: rgba(240, 237, 230, 0.22);
-  --amber: #df9b52;
-  --cyan: #64d2db;
+  --amber: var(--color-amber);
+  --cyan: var(--color-cyan);
 }
 
 html {
