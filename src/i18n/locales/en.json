@@ -30,6 +30,7 @@
   "consent": {
     "text": "This site uses Google Analytics cookies to collect anonymous traffic statistics and improve how it works. You can accept or decline analytical cookies — your choice will not affect site functionality.",
     "accept": "Accept",
-    "decline": "Decline"
+    "decline": "Decline",
+    "manage": "Cookie settings"
   }
 }

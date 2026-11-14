@@ -30,6 +30,7 @@
   "consent": {
     "text": "Ta strona wykorzystuje pliki cookie Google Analytics w celu zbierania anonimowych statystyk odwiedzin i ulepszania jej działania. Możesz zaakceptować lub odrzucić cookies analityczne — wybór nie wpływa na działanie strony.",
     "accept": "Akceptuj",
-    "decline": "Odrzuć"
+    "decline": "Odrzuć",
+    "manage": "Ustawienia cookies"
   }
 }

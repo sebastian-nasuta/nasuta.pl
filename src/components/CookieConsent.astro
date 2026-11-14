@@ -2,36 +2,90 @@
 import { t } from '../i18n';
 ---
 
-<aside
+<button
+  id="cookieTrigger"
+  type="button"
+  data-open-consent
+  aria-label={t('consent.manage')}
+  title={t('consent.manage')}
+  class="hidden fixed bottom-[clamp(8.5rem,16dvh,11rem)] right-3 sm:right-6 z-40 w-9 h-9 border border-white/[0.12] bg-[#08080d]/85 backdrop-blur-md text-ink/50 hover:text-amber hover:border-amber/50 transition-colors flex items-center justify-center cursor-pointer"
+>
+  <svg
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="1.6"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    class="w-4 h-4"
+    aria-hidden="true"
+  >
+    <path d="M12 2a10 10 0 1 0 10 10 4 4 0 0 1-5-5 4 4 0 0 1-5-5" />
+    <path d="M8.5 8.5v.01" />
+    <path d="M16 15.5v.01" />
+    <path d="M12 12v.01" />
+    <path d="M11 17v.01" />
+    <path d="M7 14v.01" />
+  </svg>
+</button>
+
+<div
   id="cookieConsent"
   role="dialog"
+  aria-modal="true"
   aria-label="Cookie consent"
-  class="hidden fixed bottom-4 right-4 left-4 sm:left-auto sm:max-w-sm z-50 border border-white/[0.12] bg-bg/95 backdrop-blur-md p-4 font-mono text-[0.62rem] leading-relaxed tracking-[0.12em] text-ink/70"
+  class="hidden fixed inset-0 z-50 bg-black/45 backdrop-blur-[2px] flex items-center justify-center p-4"
 >
-  <p data-i18n-key="consent.text">{t('consent.text')}</p>
-  <div class="mt-3 flex items-center justify-end gap-2 uppercase tracking-[0.2em]">
-    <button
-      type="button"
-      data-consent-action="denied"
-      data-i18n-key="consent.decline"
-      class="px-3 py-1.5 border border-white/10 hover:border-white/30 text-ink/55 hover:text-ink/85 transition-colors cursor-pointer"
-    >
-      {t('consent.decline')}
-    </button>
-    <button
-      type="button"
-      data-consent-action="granted"
-      data-i18n-key="consent.accept"
-      class="px-3 py-1.5 border border-amber/40 bg-amber/10 hover:border-amber text-amber transition-colors cursor-pointer"
-    >
-      {t('consent.accept')}
-    </button>
+  <div class="w-full max-w-[32rem] border border-amber/30 bg-[#08080d]/95 backdrop-blur-md p-5 sm:p-7 shadow-[0_24px_72px_rgba(0,0,0,0.92),0_0_28px_rgba(223,155,82,0.1)] font-mono text-[0.68rem] sm:text-[0.72rem] leading-relaxed tracking-[0.12em] text-ink/80">
+    <p data-i18n-key="consent.text">{t('consent.text')}</p>
+    <div class="mt-5 flex items-center justify-between gap-3 uppercase tracking-[0.2em] text-[0.64rem] sm:text-[0.68rem]">
+      <button
+        type="button"
+        data-consent-action="denied"
+        data-i18n-key="consent.decline"
+        class="px-4 py-2 border border-white/15 hover:border-white/35 text-ink/60 hover:text-ink transition-colors cursor-pointer"
+      >
+        {t('consent.decline')}
+      </button>
+      <button
+        type="button"
+        data-consent-action="granted"
+        data-i18n-key="consent.accept"
+        class="px-4 py-2 border border-amber/50 bg-amber/15 hover:border-amber hover:bg-amber/25 text-amber transition-colors cursor-pointer"
+      >
+        {t('consent.accept')}
+      </button>
+    </div>
   </div>
-</aside>
+</div>
 
 <script>
   const CONSENT_KEY = 'nasuta-consent';
   const banner = document.getElementById('cookieConsent');
+  const trigger = document.getElementById('cookieTrigger');
+
+  function clearAnalyticsCookies() {
+    const hostname = window.location.hostname;
+    const domains = [hostname, `.${hostname}`];
+    document.cookie.split(';').forEach((entry) => {
+      const name = entry.split('=')[0]?.trim();
+      if (!name || (!name.startsWith('_ga') && !name.startsWith('_gid'))) return;
+      document.cookie = `${name}=; Max-Age=0; path=/`;
+      for (const domain of domains) {
+        document.cookie = `${name}=; Max-Age=0; path=/; domain=${domain}`;
+      }
+    });
+  }
+
+  function showModal() {
+    banner?.classList.remove('hidden');
+    trigger?.classList.add('hidden');
+  }
+
+  function hideModal() {
+    banner?.classList.add('hidden');
+    trigger?.classList.remove('hidden');
+  }
 
   if (banner) {
     let saved: string | null = null;
@@ -40,8 +94,16 @@ import { t } from '../i18n';
     } catch {}
 
     if (saved !== 'granted' && saved !== 'denied') {
-      banner.classList.remove('hidden');
+      showModal();
+    } else {
+      hideModal();
     }
+
+    document.addEventListener('click', (e) => {
+      if ((e.target as Element | null)?.closest('[data-open-consent]')) {
+        showModal();
+      }
+    });
 
     banner.addEventListener('click', (e) => {
       const btn = (e.target as Element | null)?.closest<HTMLButtonElement>('[data-consent-action]');
@@ -52,12 +114,16 @@ import { t } from '../i18n';
         localStorage.setItem(CONSENT_KEY, choice);
       } catch {}
 
+      if (choice === 'denied') {
+        clearAnalyticsCookies();
+      }
+
       const gtagFn = (window as unknown as { gtag?: (...args: unknown[]) => void }).gtag;
       gtagFn?.('consent', 'update', {
         analytics_storage: choice,
       });
 
-      banner.classList.add('hidden');
+      hideModal();
     });
   }
 </script>
